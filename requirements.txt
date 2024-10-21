@@ -1,0 +1,11 @@
+requests
+aiohttp
+dnspython
+filetype
+pyTelegramBotAPI
+bs4
+pymongo
+gradio_client
+python-dotenv
+starlette
+uvicorn
