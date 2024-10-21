@@ -195,7 +195,7 @@ def get_instance(name: str = "corcel"):
     return (
         # corcel_ins if name == "corcel"
         # else yuntian_ins if name == "yuntiandeng"
-        else artifacts_ins if name == "artifacts"
+        artifacts_ins if name == "artifacts"
         else None
     )
 
