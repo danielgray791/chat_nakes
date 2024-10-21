@@ -1,6 +1,6 @@
 import re
 
-from .corcel import Corcel
+# from .corcel import Corcel
 # from .yuntian_deng_o1 import YuntianDeng
 from .artifacts import Artifacts
 
@@ -186,16 +186,16 @@ providers = {
 }
 providers.pop("yuntiandeng")
 
-corcel_ins = Corcel()
+# corcel_ins = Corcel()
 # yuntian_ins = YuntianDeng()
 artifacts_ins = Artifacts()
 
             
 def get_instance(name: str = "corcel"): 
     return (
-        corcel_ins if name == "corcel"
+        # corcel_ins if name == "corcel"
         # else yuntian_ins if name == "yuntiandeng"
-        else artifacts_ins if name == "artifacts"
+        artifacts_ins if name == "artifacts"
         else None
     )
 
