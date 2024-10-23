@@ -64,6 +64,14 @@ async def webhook(request: Request):
 
     return Response("ok", status_code=200)
 
+async def del_webhook(request: Request): 
+    try: 
+        await bot.delete_webhook()
+    except Exception as e: 
+        print("Error: ", traceback.print_exc())
+
+    return Response("Webhook successfully deleted!", status_code=200)
+
 async def handle_updates(request: Request): 
     data = await request.body()
     print("Data: ", data)
