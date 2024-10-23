@@ -82,6 +82,7 @@ async def handle_updates(request: Request):
     
 app = Starlette(routes=[
     Route("/", endpoint=index),
+    Route("/del_webhook", endpoint=del_webhook),
     Route("/webhook", endpoint=webhook, methods=["POST"]),
     Route("/handle_updates", endpoint=handle_updates, methods=["POST"])
 ])
