@@ -105,19 +105,6 @@ NOT_JOINED_MESSAGE = (
     "Maaf anda tidak diperbolehkan untuk mengakses bot ini\!"
 )
 
-DONATE_MESSAGE = (
-    "Hai, terima kasih sudah mau berdonasi! Bot ini sepenuhnya dikelola oleh relawan, "
-    "jadi kontribusi Anda sangat berarti bagi kelangsungan dan perkembangan bot ini. "
-    "Kami dengan senang hati menerima donasi melalui metode berikut:"
-)
-
-DONATE_MARKUP = InlineKeyboardMarkup(
-    keyboard=[
-        [InlineKeyboardButton("Donasi via Saweria", url="https://saweria.co/ainewsid")],
-        [InlineKeyboardButton("Donasi via Buy Me A Coffee", url="https://buymeacoffee.com/ainewsid")]
-    ],
-) 
-
 CONFIG_MENU_MARKUP = lambda user_id: InlineKeyboardMarkup(
     keyboard=[
         [InlineKeyboardButton("Menampilkan Konfigurasi", callback_data=f"{user_id}.config.display")],
@@ -128,16 +115,8 @@ CONFIG_MENU_MARKUP = lambda user_id: InlineKeyboardMarkup(
 
 async def check_subscription(msg: Message) -> Tuple[bool, str]: 
     groups_map = {
-        "aiartidn": -1002155873968,
-        "aitipsid": -1002211742885,
-        "forumaiindonesia": -1001218880477,
-        "ainewsid": -1002070055371,
         "admininfoseminar": -1002374870153,
         "diskusiinfoseminar": -1002445614395,
-        "Revins_co": -1001727916136,
-        "Ekspresi_karakter": -1001777139262,
-        "familyties_02": -1002192232202,
-        "mencarimomentum": -1002246524544
     }
 
     allowed_chat_ids = list(groups_map.values())
@@ -232,7 +211,7 @@ async def photo_handler(message: Message):
         for text_chunk in result_chunks: 
             msg = await bot.reply_to(message, text_chunk, parse_mode="MarkdownV2") 
 
-        await bot.edit_message_text(text_chunk, msg.chat.id, msg.message_id, reply_markup=DONATE_MARKUP, parse_mode="MarkdownV2")
+        await bot.edit_message_text(text_chunk, msg.chat.id, msg.message_id, parse_mode="MarkdownV2")
         await user.save()
 
 @bot.message_handler(commands=['chat'])
@@ -264,7 +243,7 @@ async def chat_command(message: Message):
 
         for text_chunk in result_chunks: 
             msg = await bot.reply_to(message, text_chunk, parse_mode="MarkdownV2") 
-        await bot.edit_message_text(text_chunk, msg.chat.id, msg.message_id, reply_markup=DONATE_MARKUP, parse_mode="MarkdownV2")
+        await bot.edit_message_text(text_chunk, msg.chat.id, msg.message_id, parse_mode="MarkdownV2")
         
         await user.save()
 
@@ -340,19 +319,6 @@ async def config_command(message: Message):
         await bot.reply_to(message, callback_text, parse_mode="MarkdownV2")
     else: 
         await bot.reply_to(message, "Menu Konfigurasi Chat", reply_markup=CONFIG_MENU_MARKUP(tg_user.id))
-
-@bot.message_handler(commands=['donate'])
-async def donate_command(message: Message): 
-    tg_user = message.from_user
-    text = message.text + " "
-    my_bot = await bot.get_me()
-
-    if text.startswith("/donate@"): 
-        command = text.split("@")
-        if len(command) > 1 and command[1][:len(my_bot.username) + 1] != my_bot.username + " ": 
-            return
-
-    await bot.reply_to(message, DONATE_MESSAGE, reply_markup=DONATE_MARKUP)
 
 
 @bot.callback_query_handler(func=lambda call: True)
@@ -494,5 +460,5 @@ async def text_feeder(message: Message):
             for text_chunk in result_chunks: 
                 msg = await bot.reply_to(message, text_chunk, parse_mode="MarkdownV2")
 
-            await bot.edit_message_text(text_chunk, msg.chat.id, msg.message_id, reply_markup=DONATE_MARKUP, parse_mode="MarkdownV2")
+            await bot.edit_message_text(text_chunk, msg.chat.id, msg.message_id, parse_mode="MarkdownV2")
             await user.save()
