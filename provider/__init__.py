@@ -151,7 +151,7 @@ class Provider:
 
 providers = {
     "corcel": Provider(
-        name="Forum Ai Indonesia",
+        name="Open Ai V3",
         item_name="corcel",
         default_model="gpt-4o",
         models=[
