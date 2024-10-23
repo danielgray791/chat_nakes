@@ -1,6 +1,6 @@
 import re
 
-# from .corcel import Corcel
+from .corcel import Corcel
 # from .yuntian_deng_o1 import YuntianDeng
 from .artifacts import Artifacts
 
