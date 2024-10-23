@@ -7,14 +7,14 @@ from pymongo.server_api import ServerApi
 from pymongo import MongoClient
 
 DB_NAME = "telegram_chat"
-COLL_NAME = "forumai_chat"
+COLL_NAME = "semaran_chat"
 URI = "mongodb+srv://lilokopa1:lilokopa009@cluster0.tlefh.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 
 class MongoDB: 
     def __init__(
             self,  
             db_name: str = "telegram_chat", 
-            collection_name: str = "forumai_chat",
+            collection_name: str = "semaran_chat",
             uri: str = ""
         ): 
         self.client = MongoClient(URI, server_api=ServerApi("1"))
