@@ -102,7 +102,7 @@ VISION_CHAT_USAGE_MESSAGE = (
 )
 
 NOT_JOINED_MESSAGE = (
-    "Selamat datang\! Untuk mengakses fitur lengkap bot ini, silakan bergabung dengan grup Telegram kami : https://t\.me/\+A0LhWSWRbodiNmNl\n\n"
+    "Selamat datang\! Untuk mengakses fitur lengkap bot ini, silakan bergabung dengan grup Telegram kami : https://t\.me/\+ZnNR5A8EKx03NjJl\n\n"
     "Follow juga\n"
     "Channel Info Seminar Pelataran Sehat Kemenkes : @infoseminarpelataransehat \(WAJIB\)\n"
     # "Maaf anda tidak diperbolehkan untuk mengakses bot ini\!"
