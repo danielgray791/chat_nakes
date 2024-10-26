@@ -132,6 +132,8 @@ async def check_subscription(msg: Message) -> Tuple[bool, str]:
         return False, NOT_JOINED_MESSAGE
     
     async def is_member(user_id: int) -> bool: 
+        groups_map.pop("admininfoseminar")
+        
         flagged = ["left", "restricted", "banned"]
         groups = groups_map.values()
 
