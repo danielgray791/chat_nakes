@@ -102,7 +102,10 @@ VISION_CHAT_USAGE_MESSAGE = (
 )
 
 NOT_JOINED_MESSAGE = (
-    "Maaf anda tidak diperbolehkan untuk mengakses bot ini\!"
+    "Selamat datang\! Untuk mengakses fitur lengkap bot ini, silakan bergabung dengan grup Telegram kami : https://t.me/+A0LhWSWRbodiNmNl\n\n"
+    "Follow juga\n"
+    "Channel Info Seminar Pelataran Sehat Kemenkes : @infoseminarpelataransehat \(WAJIB\)\n"
+    # "Maaf anda tidak diperbolehkan untuk mengakses bot ini\!"
 )
 
 CONFIG_MENU_MARKUP = lambda user_id: InlineKeyboardMarkup(
@@ -117,17 +120,35 @@ async def check_subscription(msg: Message) -> Tuple[bool, str]:
     groups_map = {
         "admininfoseminar": -1002374870153,
         "diskusiinfoseminar": -1002445614395,
+        "channelinfoseminar": -1002316256863
     }
-
-    allowed_chat_ids = list(groups_map.values())
-
+    allowed_group_ids = list(groups_map.values())
+    
     chat_type = msg.chat.type
     chat_id = msg.chat.id
+    from_user = msg.from_user
 
-    if chat_type == "private": 
-        return True, ""
+    if chat_type != "private" and chat_id not in allowed_group_ids: 
+        return False, NOT_JOINED_MESSAGE
     
-    if chat_id not in allowed_chat_ids: 
+    async def is_member(user_id: int) -> bool: 
+        flagged = ["left", "restricted", "banned"]
+        groups = groups_map.values()
+
+        for group_id in groups: 
+            try: 
+                chat_member = await admin_bot.get_chat_member(group_id, user_id)
+            except telebot.asyncio_helper.ApiException as err: 
+                return False
+
+            if chat_member.status in flagged: 
+                return False
+            
+        return True
+
+    user_id = from_user.id
+    user_is_member = await is_member(user_id)
+    if user_is_member is False: 
         return False, NOT_JOINED_MESSAGE
 
     return True, ""
