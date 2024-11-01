@@ -103,11 +103,11 @@ VISION_CHAT_USAGE_MESSAGE = (
 
 NOT_JOINED_MESSAGE = (
     "*Selamat datang,*\n"
-    "Gemini Google Bot ini milik https://bit.ly/WebinarNakesGratis\n"
-    "Untuk mengakses fitur lengkap Gemini Google bot ini,\n\n"
+    "Ai Know Bot ini milik https://bit\.ly/WebinarNakesGratis\n"
+    "Untuk mengakses fitur lengkap Ai Know bot ini,\n\n"
     "Silahkan \n"
     "*WAJIB* follow\n"
-    "https://t.me/infoseminarpelataransehat\n"
+    "https://t\.me/infoseminarpelataransehat\n"
     "Channel Info Seminar SKP Kemenkes Pelataran Sehat 🥇🥇🏆\n\n"
     "Terima kasih"
 )
