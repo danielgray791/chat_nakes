@@ -120,7 +120,7 @@ CONFIG_MENU_MARKUP = lambda user_id: InlineKeyboardMarkup(
     ],
 )
 
-async def check_subscription(msg: Message) -> Tuple[bool, str]: 
+async def check_subscription(msg: Message, user: User) -> Tuple[bool, str]: 
     groups_map = {
         "admininfoseminar": -1002374870153,
         "diskusiinfoseminar": -1002445614395,
@@ -130,7 +130,6 @@ async def check_subscription(msg: Message) -> Tuple[bool, str]:
     
     chat_type = msg.chat.type
     chat_id = msg.chat.id
-    from_user = msg.reply_to_message.from_user
 
     if chat_type != "private" and chat_id not in allowed_group_ids: 
         return False, NOT_JOINED_MESSAGE
@@ -152,7 +151,7 @@ async def check_subscription(msg: Message) -> Tuple[bool, str]:
             
         return True
 
-    user_id = from_user.id
+    user_id = user.id
     user_is_member = await is_member(user_id)
     if user_is_member is False: 
         return False, NOT_JOINED_MESSAGE
@@ -215,7 +214,7 @@ async def photo_handler(message: Message):
         if tg_user.username == "GroupAnonymousBot": 
             return await bot.reply_to(message, "Anda tidak diperkenankan menggunakan bot ini sebagai Anonymous Admin")
             
-        subbed, callback_text = await check_subscription(message)
+        subbed, callback_text = await check_subscription(message, tg_user)
         if subbed is False: 
             return await bot.reply_to(message, callback_text, parse_mode="MarkdownV2")
 
@@ -250,7 +249,7 @@ async def chat_command(message: Message):
     if tg_user.username == "GroupAnonymousBot": 
         return await bot.reply_to(message, "Anda tidak diperkenankan menggunakan bot ini sebagai Anonymous Admin")
 
-    subbed, callback_text = await check_subscription(message)
+    subbed, callback_text = await check_subscription(message, tg_user)
     if subbed is False: 
         await bot.reply_to(message, callback_text, parse_mode="MarkdownV2")
     else: 
@@ -288,7 +287,7 @@ async def desc_command(message: Message):
     if tg_user.username == "GroupAnonymousBot": 
         return await bot.reply_to(message, "Anda tidak diperkenankan menggunakan bot ini sebagai Anonymous Admin")
 
-    subbed, callback_text = await check_subscription(message)
+    subbed, callback_text = await check_subscription(message, tg_user)
     if subbed is False: 
         await bot.reply_to(message, callback_text, parse_mode="MarkdownV2")
     else: 
@@ -313,7 +312,7 @@ async def clear_chat_command(message: Message):
     if tg_user.username == "GroupAnonymousBot": 
         return await bot.reply_to(message, "Anda tidak diperkenankan menggunakan bot ini sebagai Anonymous Admin")
 
-    subbed, callback_text = await check_subscription(message)
+    subbed, callback_text = await check_subscription(message, tg_user)
     if subbed is False: 
         await bot.reply_to(message, callback_text, parse_mode="MarkdownV2")
     else: 
@@ -341,7 +340,7 @@ async def config_command(message: Message):
     if tg_user.username == "GroupAnonymousBot": 
         return await bot.reply_to(message, "Anda tidak diperkenankan menggunakan bot ini sebagai Anonymous Admin")
 
-    subbed, callback_text = await check_subscription(message)
+    subbed, callback_text = await check_subscription(message, tg_user)
     if subbed is False: 
         await bot.reply_to(message, callback_text, parse_mode="MarkdownV2")
     else: 
@@ -359,7 +358,7 @@ async def callback_query_feeder(call: CallbackQuery):
     if tg_user.username == "GroupAnonymousBot": 
         return await bot.reply_to(message, "Anda tidak diperkenankan menggunakan bot ini sebagai Anonymous Admin")
 
-    subbed, callback_text = await check_subscription(message)
+    subbed, callback_text = await check_subscription(message, tg_user)
     if subbed is False: 
         return await bot.answer_callback_query(call.id, callback_text, parse_mode="MarkdownV2")
     
@@ -477,7 +476,7 @@ async def text_feeder(message: Message):
         if tg_user.username == "GroupAnonymousBot": 
             return await bot.reply_to(message, "Anda tidak diperkenankan menggunakan bot ini sebagai Anonymous Admin")
 
-        subbed, callback_text = await check_subscription(message)
+        subbed, callback_text = await check_subscription(message, tg_user)
         if subbed is False: 
             await bot.reply_to(message, callback_text, parse_mode="MarkdownV2")
         else: 
