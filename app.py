@@ -102,10 +102,14 @@ VISION_CHAT_USAGE_MESSAGE = (
 )
 
 NOT_JOINED_MESSAGE = (
-    "Selamat datang\! Untuk mengakses fitur lengkap bot ini, silakan bergabung dengan grup Telegram kami : https://t\.me/\+ZnNR5A8EKx03NjJl\n\n"
-    "Follow juga\n"
-    "Channel Info Seminar Pelataran Sehat Kemenkes : @infoseminarpelataransehat \(WAJIB\)\n"
-    # "Maaf anda tidak diperbolehkan untuk mengakses bot ini\!"
+    "*Selamat datang,*\n"
+    "Gemini Google Bot ini milik https://bit.ly/WebinarNakesGratis\n"
+    "Untuk mengakses fitur lengkap Gemini Google bot ini,\n\n"
+    "Silahkan \n"
+    "*WAJIB* follow\n"
+    "https://t.me/infoseminarpelataransehat\n"
+    "Channel Info Seminar SKP Kemenkes Pelataran Sehat 🥇🥇🏆\n\n"
+    "Terima kasih"
 )
 
 CONFIG_MENU_MARKUP = lambda user_id: InlineKeyboardMarkup(
