@@ -130,7 +130,7 @@ async def check_subscription(msg: Message) -> Tuple[bool, str]:
     
     chat_type = msg.chat.type
     chat_id = msg.chat.id
-    from_user = msg.from_user
+    from_user = msg.reply_to_message.from_user
 
     if chat_type != "private" and chat_id not in allowed_group_ids: 
         return False, NOT_JOINED_MESSAGE
