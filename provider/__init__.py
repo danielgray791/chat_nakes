@@ -152,7 +152,7 @@ class Provider:
 
 providers = {
     "corcel": Provider(
-        name="Mysterious 1",
+        name="V 1",
         item_name="corcel",
         default_model="gpt-4o",
         models=[
@@ -162,7 +162,7 @@ providers = {
         ]
     ),
     "artifacts": Provider(
-        name="Mysterious 2",
+        name="V 2",
         item_name="artifacts",
         default_model="claude-3-5-sonnet-latest",
         models=[
@@ -176,7 +176,7 @@ providers = {
         ]
     ),
     "scira": Provider(
-        name="Mysterious 3",
+        name="V 3",
         item_name="scira",
         default_model="scira-sonnet",
         models=[
