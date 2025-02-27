@@ -238,7 +238,7 @@ async def photo_handler(message: Message):
         for text_chunk in result_chunks: 
             msg = await bot.reply_to(message, text_chunk, parse_mode="MarkdownV2") 
 
-        await bot.edit_message_text(text_chunk, msg.chat.id, msg.message_id, parse_mode="MarkdownV2")
+        # await bot.edit_message_text(text_chunk, msg.chat.id, msg.message_id, parse_mode="MarkdownV2")
         await user.save()
 
 @bot.message_handler(commands=['chat'])
@@ -270,8 +270,8 @@ async def chat_command(message: Message):
 
         for text_chunk in result_chunks: 
             msg = await bot.reply_to(message, text_chunk, parse_mode="MarkdownV2") 
-        await bot.edit_message_text(text_chunk, msg.chat.id, msg.message_id, parse_mode="MarkdownV2")
-        
+            
+        # await bot.edit_message_text(text_chunk, msg.chat.id, msg.message_id, parse_mode="MarkdownV2")
         await user.save()
 
 @bot.message_handler(commands=['desc'])
@@ -487,5 +487,5 @@ async def text_feeder(message: Message):
             for text_chunk in result_chunks: 
                 msg = await bot.reply_to(message, text_chunk, parse_mode="MarkdownV2")
 
-            await bot.edit_message_text(text_chunk, msg.chat.id, msg.message_id, parse_mode="MarkdownV2")
+            # await bot.edit_message_text(text_chunk, msg.chat.id, msg.message_id, parse_mode="MarkdownV2")
             await user.save()
