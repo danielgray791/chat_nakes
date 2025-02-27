@@ -10,7 +10,7 @@ import filetype
 import telebot
 import aiohttp
 
-from provider import split_message, escape
+from provider import split_message, escape, get_model_id
 from chatuser import ChatUser
 from typing import Optional, Tuple, List, Union
 
@@ -173,9 +173,10 @@ async def chat(user: ChatUser, prompt: Union[str, Tuple[str, str]]) -> List:
     config = user.config
     model_ins = config.model_ins
     item_name = config.provider.item_name
+    models = provider.providers[item_name].models
 
     kwargs = {}
-    kwargs["model"] = config.model.replace("_dot_", ".")
+    kwargs["model"] = get_model_id(models, config.model)
     kwargs["history"] = user.history[item_name]
 
     # print("Chat: ", {"prompt": prompt, "kwargs": kwargs})
