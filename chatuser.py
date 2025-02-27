@@ -1,6 +1,6 @@
 import asyncio
 
-from provider import Corcel, Artifacts, get_instance, providers
+from provider import Corcel, Artifacts, Scira, get_instance, providers
 from dataclasses import dataclass
 from typing import Dict, Optional, List, Any, Union
 from mongodb import MongoDB
@@ -62,7 +62,7 @@ class Provider:
 @dataclass
 class Config:
     model: str
-    model_ins: Union[Corcel, Artifacts]
+    model_ins: Union[Corcel, Artifacts, Scira]
     vision: bool
     provider: Provider
     
