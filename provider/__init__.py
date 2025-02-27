@@ -1,8 +1,8 @@
 import re
 
 from .corcel import Corcel
-# from .yuntian_deng_o1 import YuntianDeng
 from .artifacts import Artifacts
+from .scira import Scira
 
 from dataclasses import dataclass
 from typing import Dict, List, Union
@@ -134,6 +134,7 @@ def split_message(message, max_length=4096):
 class Model: 
     number: int
     name: str
+    id: str
     vision: bool
 
 @dataclass
@@ -143,59 +144,67 @@ class Provider:
     default_model: str
     models: List[Model]
 
-    def get_model(self, name: str) -> Model: 
+    def get_model(self, model_id: str) -> Model: 
         for model in self.models: 
-            if model.name == name: 
+            if model.id == model_id: 
                 return model
         return None
 
 providers = {
     "corcel": Provider(
-        name="Open Ai V3",
+        name="Forum Ai Indonesia",
         item_name="corcel",
         default_model="gpt-4o",
         models=[
-            Model(number=1, name="gpt-4o", vision=False),
-            Model(number=2, name="claude-3-sonnet-20240229", vision=False),
-            Model(number=3, name="gemini-pro",  vision=False)
+            Model(number=1, name="gpt-4o", id="gpt-4o", vision=False),
+            Model(number=2, name="claude-3-sonnet-20240229", id="claude-3-sonnet-20240229", vision=False),
+            Model(number=3, name="gemini-pro", id="gemini-pro",  vision=False)
         ]
-    ),
-    "yuntiandeng": Provider(
-         name="Open Ai",
-         item_name="yuntiandeng",
-         default_model="o1-mini",
-         models=[
-             Model(number=1, name="o1-preview", vision=False),
-             Model(number=2, name="o1-mini", vision=False),
-         ]
     ),
     "artifacts": Provider(
         name="Open Ai V2",
         item_name="artifacts",
-        default_model="claude-3-5-sonnet-20240620",
+        default_model="claude-3-5-sonnet-latest",
         models=[
-            Model(number=1, name="o1-mini", vision=False),
-            Model(number=2, name="o1-preview", vision=False),
-            Model(number=3, name="claude-3-5-sonnet-20240620", vision=True),
-            Model(number=4, name="gpt-4o", vision=True),
-            Model(number=5, name="gpt-4o-mini", vision=True),
-            # Model(number=6, name="gpt-4-turbo", vision=True),
-            # Model(number=7, name="models/gemini-1_dot_5-pro-latest", vision=True),
+            Model(number=1, name="GPT o1", id="o1",vision=True),
+            Model(number=2, name="GPT o3 Mini", id="o3-mini",vision=False),
+            Model(number=3, name="Claude 3 dot 5 Sonnet", id="claude-3-5-sonnet-latest", vision=True),
+            Model(number=4, name="GPT 4o", id="gpt-4o", vision=True),
+            Model(number=5, name="GPT 4o Mini", id="gpt-4o-mini", vision=True),
+            Model(number=6, name="Deepseek R1", id="accounts/fireworks/models/deepseek-r1", vision=False),
+            Model(number=7, name="Deepseek V3", id="deepseek-chat", vision=False),
+        ]
+    ),
+    "scira": Provider(
+        name="Mysterious",
+        item_name="scira",
+        default_model="scira-sonnet",
+        models=[
+            Model(number=1, name="Claude 3 dot 7 Sonnet", id="scira-sonnet", vision=True),
+            Model(number=2, name="Grok 2 dot 0 Vision", id="scira-default", vision=True),
+            Model(number=3, name="Deepseek R1", id="scira-r1", vision=False),
         ]
     )
 }
-providers.pop("yuntiandeng")
+# providers.pop("yuntiandeng")
 
-# corcel_ins = Corcel()
+corcel_ins = Corcel()
 # yuntian_ins = YuntianDeng()
 artifacts_ins = Artifacts()
+scira_ins = Scira()
 
-            
+def get_model_id(models: List[Model], name: str) -> str:
+    for model in models:
+        if model.name == name:
+            return model.id
+    return None
+
 def get_instance(name: str = "corcel"): 
     return (
-        # corcel_ins if name == "corcel"
+        corcel_ins if name == "corcel"
         # else yuntian_ins if name == "yuntiandeng"
-        artifacts_ins if name == "artifacts"
+        else artifacts_ins if name == "artifacts"
+        else scira_ins if name == "scira"
         else None
     )
 
