@@ -179,11 +179,11 @@ async def chat(user: ChatUser, prompt: Union[str, Tuple[str, str]]) -> List:
     kwargs["model"] = get_model_id(models, config.model)
     kwargs["history"] = user.history[item_name]
 
-    # print("Chat: ", {"prompt": prompt, "kwargs": kwargs})
+    print("Chat: ", {"prompt": prompt, "kwargs": kwargs})
 
     # print(config)
     response = await asyncio.to_thread(model_ins.chat, prompt, **kwargs)
-    # print("Chat Response", {"response": response})
+    print("Chat Response", {"response": response})
     
     chunked_response = split_message(escape(response))
     return chunked_response
