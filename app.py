@@ -57,7 +57,7 @@ async def webhook(request: Request):
     try: 
         data = await request.json()
         async with aiohttp.ClientSession() as session:
-            async with session.post(WEBHOOK + "/handle_updates", json=data, timeout=0.5) as response: 
+            async with session.post(WEBHOOK + "/handle_updates", json=data, timeout=1) as response: 
                 pass
     except Exception as e: 
         pass
