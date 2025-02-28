@@ -164,7 +164,7 @@ providers = {
     "artifacts": Provider(
         name="V 2",
         item_name="artifacts",
-        default_model="claude-3-5-sonnet-latest",
+        default_model="o1",
         models=[
             Model(number=1, name="GPT o1", id="o1",vision=True),
             Model(number=2, name="GPT o3 Mini", id="o3-mini",vision=False),
