@@ -164,7 +164,7 @@ providers = {
     "artifacts": Provider(
         name="V 2",
         item_name="artifacts",
-        default_model="o1",
+        default_model="GPT o1",
         models=[
             Model(number=1, name="GPT o1", id="o1",vision=True),
             Model(number=2, name="GPT o3 Mini", id="o3-mini",vision=False),
@@ -178,7 +178,7 @@ providers = {
     "scira": Provider(
         name="V 3",
         item_name="scira",
-        default_model="scira-sonnet",
+        default_model="Grok 2 dot 0 Vision",
         models=[
             Model(number=1, name="Claude 3 dot 7 Sonnet", id="scira-sonnet", vision=True),
             Model(number=2, name="Grok 2 dot 0 Vision", id="scira-default", vision=True),
