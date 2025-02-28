@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from typing import Dict, Optional, List, Any, Union
 from mongodb import MongoDB
 
-DEFAULT_PROVIDER = providers["scira"]
+DEFAULT_PROVIDER = providers["artifacts"]
 db = MongoDB()
 
 def pretty_class(
