@@ -144,65 +144,57 @@ class Provider:
     default_model: str
     models: List[Model]
 
-    def get_model(self, name: str) -> Model: 
+    def get_model(self, model_name: str) -> Model: 
         for model in self.models: 
-            if model.name == name: 
+            if model.name == model_name: 
                 return model
         return None
 
 providers = {
     "corcel": Provider(
-        name="V 1",
+        name="NAKES V1",
         item_name="corcel",
-        default_model="gpt-4o",
+        default_model="GPT 4 dot 0",
         models=[
-            Model(number=1, name="gpt-4o", id="gpt-4o", vision=False),
-            Model(number=2, name="claude-3-sonnet-20240229", id="claude-3-sonnet-20240229", vision=False),
-            Model(number=3, name="gemini-pro", id="gemini-pro",  vision=False)
+            Model(number=1, name="GPT 4 dot 0", id="gpt-4o", vision=False),
+            Model(number=2, name="Claude 3 dot 5 Sonnet", id="claude-3-5-sonnet-20241022", vision=False),
+            Model(number=3, name="Cortext Ultra", id="cortext-ultra",  vision=False)
         ]
     ),
     "artifacts": Provider(
-        name="V 2",
+        name="NAKES V2",
         item_name="artifacts",
-        default_model="GPT o1",
+        default_model="Claude 3 dot 7 Sonnet",
         models=[
             Model(number=1, name="GPT o1", id="o1",vision=True),
             Model(number=2, name="GPT o3 Mini", id="o3-mini",vision=False),
-            Model(number=3, name="Claude 3 dot 5 Sonnet", id="claude-3-5-sonnet-latest", vision=True),
-            Model(number=4, name="GPT 4o", id="gpt-4o", vision=True),
-            Model(number=5, name="GPT 4o Mini", id="gpt-4o-mini", vision=True),
-            Model(number=6, name="Deepseek R1", id="accounts/fireworks/models/deepseek-r1", vision=False),
-            Model(number=7, name="Deepseek V3", id="deepseek-chat", vision=False),
+            Model(number=3, name="Claude 3 dot 7 Sonnet", id="claude-3-7-sonnet-latest", vision=True),
+            Model(number=4, name="Claude 3 dot 5 Sonnet", id="claude-3-5-sonnet-latest", vision=True),
+            Model(number=5, name="Deepseek R1", id="accounts/fireworks/models/deepseek-r1", vision=False),
+            Model(number=6, name="Deepseek V3", id="deepseek-chat", vision=False),
+            Model(number=7, name="Qwen QWQ 32B Prev", id="accounts/fireworks/models/qwen-qwq-32b-preview", vision=False),
         ]
     ),
     "scira": Provider(
-        name="V 3",
+        name="NAKES V3",
         item_name="scira",
-        default_model="Grok 2 dot 0 Vision",
+        default_model="Claude 3 dot 7 Sonnet",
         models=[
             Model(number=1, name="Claude 3 dot 7 Sonnet", id="scira-sonnet", vision=True),
             Model(number=2, name="Grok 2 dot 0 Vision", id="scira-default", vision=True),
-            Model(number=3, name="Deepseek R1", id="scira-r1", vision=False),
+            Model(number=3, name="Gemini 2 dot 0 Flash", id="scira-gemini-flash", vision=True),
+            Model(number=4, name="Deepseek R1", id="scira-r1", vision=False),
         ]
     )
 }
-# providers.pop("yuntiandeng")
 
 corcel_ins = Corcel()
-# yuntian_ins = YuntianDeng()
 artifacts_ins = Artifacts()
 scira_ins = Scira()
-
-def get_model_id(models: List[Model], name: str) -> str:
-    for model in models:
-        if model.name == name:
-            return model.id
-    return None
 
 def get_instance(name: str = "corcel"): 
     return (
         corcel_ins if name == "corcel"
-        # else yuntian_ins if name == "yuntiandeng"
         else artifacts_ins if name == "artifacts"
         else scira_ins if name == "scira"
         else None
