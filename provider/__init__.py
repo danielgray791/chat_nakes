@@ -144,9 +144,9 @@ class Provider:
     default_model: str
     models: List[Model]
 
-    def get_model(self, model_id: str) -> Model: 
+    def get_model(self, name: str) -> Model: 
         for model in self.models: 
-            if model.id == model_id: 
+            if model.name == name: 
                 return model
         return None
 
