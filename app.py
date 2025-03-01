@@ -10,7 +10,7 @@ import filetype
 import telebot
 import aiohttp
 
-from provider import split_message, escape, get_model_id
+from provider import split_message, escape
 from chatuser import ChatUser
 from typing import Optional, Tuple, List, Union
 
