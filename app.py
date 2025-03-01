@@ -176,7 +176,7 @@ async def chat(user: ChatUser, prompt: Union[str, Tuple[str, str]]) -> List:
     selected_provider = provider.providers[item_name]
 
     kwargs = {}
-    kwargs["model"] = selected_provider.get_model(config.model)
+    kwargs["model"] = selected_provider.get_model(config.model).id
     kwargs["history"] = user.history[item_name]
 
     print("Chat: ", {"prompt": prompt, "kwargs": kwargs})
