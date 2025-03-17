@@ -166,13 +166,14 @@ providers = {
         item_name="artifacts",
         default_model="Claude 3 dot 7 Sonnet",
         models=[
-            Model(number=1, name="GPT o1", id="o1",vision=True),
-            Model(number=2, name="GPT o3 Mini", id="o3-mini",vision=False),
-            Model(number=3, name="Claude 3 dot 7 Sonnet", id="claude-3-7-sonnet-latest", vision=True),
-            Model(number=4, name="Claude 3 dot 5 Sonnet", id="claude-3-5-sonnet-latest", vision=True),
-            Model(number=5, name="Deepseek R1", id="accounts/fireworks/models/deepseek-r1", vision=False),
-            Model(number=6, name="Deepseek V3", id="deepseek-chat", vision=False),
-            Model(number=7, name="Qwen QWQ 32B Prev", id="accounts/fireworks/models/qwen-qwq-32b-preview", vision=False),
+            Model(number=1, name="GPT 4 dot 5", id="gpt-4.5-preview",vision=True),
+            Model(number=2, name="GPT o1", id="o1",vision=True),
+            Model(number=3, name="GPT o3 Mini", id="o3-mini",vision=False),
+            Model(number=4, name="Claude 3 dot 7 Sonnet", id="claude-3-7-sonnet-latest", vision=True),
+            Model(number=5, name="Claude 3 dot 5 Sonnet", id="claude-3-5-sonnet-latest", vision=True),
+            Model(number=6, name="Deepseek R1", id="accounts/fireworks/models/deepseek-r1", vision=False),
+            Model(number=7, name="Deepseek V3", id="deepseek-chat", vision=False),
+            Model(number=8, name="Qwen QWQ 32B Prev", id="accounts/fireworks/models/qwen-qwq-32b-preview", vision=False),
         ]
     ),
     "scira": Provider(
