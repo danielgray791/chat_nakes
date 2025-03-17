@@ -164,7 +164,7 @@ providers = {
     "artifacts": Provider(
         name="NAKES V2",
         item_name="artifacts",
-        default_model="Claude 3 dot 7 Sonnet",
+        default_model="GPT 4 dot 5",
         models=[
             Model(number=1, name="GPT 4 dot 5", id="gpt-4.5-preview",vision=True),
             Model(number=2, name="GPT o1", id="o1",vision=True),
