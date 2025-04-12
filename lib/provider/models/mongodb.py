@@ -11,7 +11,7 @@ from pymongo import MongoClient
 DB_NAME = "telegram_chat"
 
 ColumnNameLiteral = Literal[ 
-   "forumai_chat",
+   "semarankes_chat",
    "ip_list"
 ]
 
