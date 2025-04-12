@@ -4,14 +4,14 @@ import os
 import sys
 import traceback
 import base64
-import provider
+import lib.provider as provider
 
 import filetype
 import telebot
 import aiohttp
 
-from provider import split_message, escape
-from chatuser import ChatUser
+from lib.provider import split_message, escape
+from lib.provider.models.chatuser import ChatUser
 from typing import Optional, Tuple, List, Union
 
 from starlette.applications import Starlette
