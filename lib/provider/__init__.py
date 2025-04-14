@@ -179,12 +179,12 @@ providers = {
     "scira": Provider(
         name="NAKES V3",
         item_name="scira",
-        default_model="Claude 3 dot 7 Sonnet",
+        default_model="Grok 3 dot 0",
         models=[
-            Model(number=1, name="Claude 3 dot 7 Sonnet", id="scira-sonnet", vision=True),
-            Model(number=2, name="Grok 2 dot 0 Vision", id="scira-default", vision=True),
-            Model(number=3, name="Gemini 2 dot 0 Flash", id="scira-gemini-flash", vision=True),
-            Model(number=4, name="Deepseek R1", id="scira-r1", vision=False),
+            Model(number=1, name="Claude 3 dot 7 Sonnet", id="scira-claude", vision=True),
+            Model(number=2, name="Grok 2 dot 0 Vision", id="scira-vision", vision=True),
+            Model(number=3, name="Grok 3 dot 0 mini", id="scira-grok-3-mini", vision=False),
+            Model(number=4, name="Grok 3 dot 0", id="scira-default", vision=False),
         ]
     )
 }
