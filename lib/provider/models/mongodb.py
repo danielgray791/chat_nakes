@@ -73,8 +73,9 @@ class MongoDB:
         result = await asyncio.to_thread(self.collection.update_one, query, new_values)
         return result.modified_count > 0
     
-    async def clear(self): 
-        result = await asyncio.to_thread(self.collection.delete_many, {})
+    async def clear(self, col_name: Optional[ColumnNameLiteral]): 
+        collection = self.collection if not col_name else self.db.get_collection(col_name)
+        result = await asyncio.to_thread(collection.delete_many, {})
         return result.acknowledged
     
     async def change_collection(self, name: Optional[ColumnNameLiteral]): 
