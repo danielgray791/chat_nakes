@@ -12,6 +12,7 @@ import aiohttp
 
 from lib.provider import split_message, escape
 from lib.provider.models.chatuser import ChatUser
+from lib.provider.models.mongodb import MongoDB
 from typing import Optional, Tuple, List, Union
 
 from starlette.applications import Starlette
@@ -38,6 +39,7 @@ WEBHOOK = os.getenv("WEBHOOK")
 
 admin_bot = AsyncTeleBot(ADMIN_TOKEN)
 bot = AsyncTeleBot(TOKEN)
+db = MongoDB()
 
 setted = False
 async def index(request: Request): 
@@ -326,6 +328,27 @@ async def clear_chat_command(message: Message):
         
         await bot.reply_to(message, "Konteks Percakapan Berhasil Di Bersihkan")
         await user.save()
+
+@bot.message_handler(commands=['clearip'])
+async def clear_ip_command(message: Message): 
+    text = message.text + " "
+    tg_user = message.from_user
+    my_bot = await bot.get_me()
+    
+    if text.startswith("/clearip@"): 
+        command = text.split("@")
+        if len(command) > 1 and command[1][:len(my_bot.username) + 1] != my_bot.username + " ": 
+            return
+
+    if tg_user.username == "GroupAnonymousBot": 
+        return await bot.reply_to(message, "Anda tidak diperkenankan menggunakan bot ini sebagai Anonymous Admin")
+
+    subbed, callback_text = await check_subscription(message, tg_user)
+    if subbed is False: 
+        await bot.reply_to(message, callback_text, parse_mode="MarkdownV2")
+    else: 
+        await db.clear("ip_list")
+        await bot.reply_to(message, "IP List Berhasil Di Reset")
 
 @bot.message_handler(commands=['config'])
 async def config_command(message: Message): 
