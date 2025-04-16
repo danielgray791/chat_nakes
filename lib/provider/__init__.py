@@ -173,7 +173,7 @@ providers = {
             Model(number=5, name="GPT 4 dot 1 mini", id="gpt-4.1-mini", vision=True),
             Model(number=6, name="GPT 4 dot 1 nano", id="gpt-4.1-nano", vision=True),
             Model(number=7, name="GPT 4 dot 5 preview", id="gpt-4.5-preview", vision=True),
-            Model(number=8, name="Gemini 2.5 Pro Exp 03-25", id="gemini-2.5-pro-exp-03-25", vision=False)
+            Model(number=8, name="Gemini 2 dot 5 Pro Exp 03-25", id="gemini-2.5-pro-exp-03-25", vision=False),
         ]
     ),
     "scira": Provider(
