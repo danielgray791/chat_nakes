@@ -14,7 +14,7 @@ class MongoDB:
     def __init__(
             self,  
             db_name: str = "telegram_chat", 
-            collection_name: str = "semaran_chat",
+            collection_name: str = "semarankes_chat",
             uri: str = ""
         ): 
         self.client = MongoClient(URI, server_api=ServerApi("1"))
