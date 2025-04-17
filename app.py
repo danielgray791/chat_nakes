@@ -457,8 +457,6 @@ async def callback_query_feeder(call: CallbackQuery):
                 [ InlineKeyboardButton("Kembali", callback_data=f"{caller_id}.config.display_menu") ]
             ]
         )
-        print("Markup")
-        print(markup)
 
         if change_model_callback: 
             model_name, vision, = change_model_callback
