@@ -179,7 +179,7 @@ providers = {
     "scira": Provider(
         name="NAKES V3",
         item_name="scira",
-        default_model="Grok 3 dot 0",
+        default_model="GPT o4 Mini",
         models=[
             Model(number=1, name="GPT 4 dot 1 Mini", id="scira-4.1-mini", vision=True),
             Model(number=2, name="GPT o4 Mini", id="scira-o4-mini", vision=True),
