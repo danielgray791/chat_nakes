@@ -187,6 +187,7 @@ providers = {
             Model(number=4, name="Grok 3 dot 0 mini", id="scira-grok-3-mini", vision=True),
             Model(number=5, name="Grok 3 dot 0", id="scira-default", vision=True),
             Model(number=6, name="Gemini 2 dot 5 Flash", id="scira-google", vision=True),
+            Model(number=7, name="Claude 3 dot 7 Sonnet", id="scira-anthropic", vision=True),
         ]
     )
 }
