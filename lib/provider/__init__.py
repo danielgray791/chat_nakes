@@ -181,13 +181,14 @@ providers = {
         item_name="scira",
         default_model="GPT o4 Mini",
         models=[
-            Model(number=1, name="GPT 4 dot 1 Mini", id="scira-4.1-mini", vision=True),
+            Model(number=1, name="GPT 4o latest", id="scira-4o", vision=True),
             Model(number=2, name="GPT o4 Mini", id="scira-o4-mini", vision=True),
-            Model(number=3, name="Grok 2 dot 0 Vision", id="scira-vision", vision=True),
-            Model(number=4, name="Grok 3 dot 0 mini", id="scira-grok-3-mini", vision=True),
-            Model(number=5, name="Grok 3 dot 0", id="scira-default", vision=True),
-            Model(number=6, name="Gemini 2 dot 5 Flash", id="scira-google", vision=True),
-            Model(number=7, name="Claude 3 dot 7 Sonnet", id="scira-anthropic", vision=True),
+            Model(number=3, name="Grok 3 dot 0 mini", id="scira-grok-3-mini", vision=True),
+            Model(number=4, name="Grok 3 dot 0", id="scira-default", vision=True),
+            Model(number=5, name="Gemini 2 dot 5 Flash", id="scira-google", vision=True),
+            Model(number=6, name="Gemini 2 dot 5 Pro", id="scira-google-pro", vision=True),
+            Model(number=7, name="Sonnet 4 dot 0 Thinking", id="scira-anthropic-thinking", vision=True),
+            Model(number=8, name="Sonnet 4 dot 0", id="scira-anthropic", vision=True),  
         ]
     )
 }
