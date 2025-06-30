@@ -433,7 +433,7 @@ async def callback_query_feeder(call: CallbackQuery):
         prev_model_name = text.replace("Model Sekarang: ", "")
         if prev_model_name != user.config.model: 
             await bot.edit_message_text(
-                ChatTemplates.CHANGE_MODEL_MESSAGE(user).
+                ChatTemplates.CHANGE_MODEL_MESSAGE(user),
                 chat_id, 
                 message_id, 
                 reply_markup=ChatTemplates.CHANGE_MODEL_MARKUP(user, caller_id, 0),
