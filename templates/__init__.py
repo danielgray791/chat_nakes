@@ -105,7 +105,7 @@ class Chat:
     @staticmethod
     def CHANGE_MODEL_MARKUP(user: chatuser.ChatUser, caller_id: int, page: int) -> InlineKeyboardMarkup: 
         item_name = user.config.provider.item_name
-        selected_provider = provider.providers[item_name]
+        selected_provider = providers[item_name]
 
         return selected_provider.inline_keyboard_markup(caller_id, page)
     
