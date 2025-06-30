@@ -5,6 +5,7 @@ import os
 import sys
 import traceback
 import base64
+import utils
 import lib.provider as provider
 
 import filetype
@@ -14,6 +15,7 @@ import aiohttp
 from lib.provider import split_message, escape
 from lib.provider.models.chatuser import ChatUser
 from lib.provider.models.mongodb import MongoDB
+from templates import Chat as ChatTemplates
 from typing import Optional, Tuple, List, Union
 
 from starlette.applications import Starlette
@@ -58,12 +60,12 @@ async def index(request: Request):
 
 async def webhook(request: Request): 
     try: 
-        data = await request.json()
+        raw = await request.body()
         async with aiohttp.ClientSession() as session:
-            async with session.post(WEBHOOK + "/handle_updates", json=data, timeout=1) as response: 
+            async with session.post(URL + "/handle_updates", data=raw, headers={"Content-Type": "application/json"},timeout=1) as response: 
                 pass
     except Exception as e: 
-        pass
+        print("Error: ",e)
 
     return Response("ok", status_code=200)
 
@@ -76,10 +78,9 @@ async def del_webhook(request: Request):
     return Response("Webhook successfully deleted!", status_code=200)
 
 async def handle_updates(request: Request): 
-    data = await request.body()
-    print("Data: ", data)
-    json_data = data.decode("utf-8")
-    update = Update.de_json(json_data)
+    update_dict = await request.json()
+    print("Data: ", update_dict)
+    update = Update.de_json(update_dict)
     await bot.process_new_updates([update])
     return Response("ok", status_code=200)
     
@@ -89,118 +90,6 @@ app = Starlette(routes=[
     Route("/webhook", endpoint=webhook, methods=["POST"]),
     Route("/handle_updates", endpoint=handle_updates, methods=["POST"])
 ])
-
-CHAT_USAGE_MESSAGE = (
-    "*Penggunaan*\n"
-    "`/chat <prompt>`\n\n"
-    "*Contoh*\n"
-    "`/chat apa itu kucing?`"
-)
-
-VISION_CHAT_USAGE_MESSAGE = (
-    "*Penggunaan*\n"
-    "`/desc <prompt>`\n\n"
-    "*Contoh*\n"
-    "`/desc gambar apa ini?`"
-)
-
-NOT_JOINED_MESSAGE = (
-    "*Selamat datang,*\n"
-    "Ai Know Bot ini milik https://bit\.ly/WebinarNakesGratis\n"
-    "Untuk mengakses fitur lengkap Ai Know bot ini,\n\n"
-    "Silahkan \n"
-    "*WAJIB* follow\n"
-    "https://t\.me/infoseminarpelataransehat\n"
-    "Channel Info Seminar SKP Kemenkes Pelataran Sehat 🥇🥇🏆\n\n"
-    "Terima kasih"
-)
-
-CONFIG_MENU_MARKUP = lambda user_id: InlineKeyboardMarkup(
-    keyboard=[
-        [InlineKeyboardButton("Menampilkan Konfigurasi", callback_data=f"{user_id}.config.display")],
-        [InlineKeyboardButton("Mengganti Penyedia Model", callback_data=f"{user_id}.config.change_provider")],
-        [InlineKeyboardButton("Mengganti Model", callback_data=f"{user_id}.config.change_model")]
-    ],
-)
-
-async def check_subscription(msg: Message, user: User) -> Tuple[bool, str]: 
-    groups_map = {
-        "admininfoseminar": -1002374870153,
-        "diskusiinfoseminar": -1002445614395,
-        "channelinfoseminar": -1002316256863
-    }
-    allowed_group_ids = list(groups_map.values())
-    
-    chat_type = msg.chat.type
-    chat_id = msg.chat.id
-
-    if chat_type != "private" and chat_id not in allowed_group_ids: 
-        return False, NOT_JOINED_MESSAGE
-    
-    async def is_member(user_id: int) -> bool: 
-        groups_map.pop("admininfoseminar")
-        
-        flagged = ["left", "restricted", "banned"]
-        groups = groups_map.values()
-
-        for group_id in groups: 
-            try: 
-                chat_member = await admin_bot.get_chat_member(group_id, user_id)
-            except telebot.asyncio_helper.ApiException as err: 
-                return False
-
-            if chat_member.status in flagged: 
-                return False
-            
-        return True
-
-    user_id = user.id
-    user_is_member = await is_member(user_id)
-    if user_is_member is False: 
-        return False, NOT_JOINED_MESSAGE
-
-    return True, ""
-
-async def user_handler(user: User) -> Optional[ChatUser]: 
-    user_id = user.id
-    full_name = user.full_name
-
-    user = await ChatUser.get(user_id)
-    if user is None: 
-        user = ChatUser(user_id, full_name)
-        await user.save()
-           
-    return user
-
-async def chat(user: ChatUser, prompt: Union[str, Tuple[str, str]]) -> List: 
-    config = user.config
-    model_ins = config.model_ins
-    item_name = config.provider.item_name
-    selected_provider = provider.providers[item_name]
-
-    kwargs = {}
-    kwargs["model"] = selected_provider.get_model(config.model).id
-    kwargs["history"] = user.history[item_name]
-
-    print("Chat: ", {"prompt": prompt, "kwargs": kwargs})
-
-    # print(config)
-    response = await asyncio.to_thread(model_ins.chat, prompt, **kwargs)
-    print("Chat Response", {"response": response})
-    
-    chunked_response = split_message(escape(response))
-    return chunked_response
-
-async def get_photo_uri(message: Message) -> str: 
-    photo_id = message.photo[-1].file_id
-    file_info = await bot.get_file(photo_id)
-
-    photo_file = await bot.download_file(file_info.file_path)
-    kind = filetype.guess(photo_file)
-    base64_photo = base64.b64encode(photo_file).decode('utf-8')
-    photo_uri = f"data:{kind.mime};base64,{base64_photo}"
-
-    return photo_uri
 
 @bot.message_handler(content_types=['photo'])
 async def photo_handler(message: Message): 
@@ -216,32 +105,54 @@ async def photo_handler(message: Message):
                 return
 
         if tg_user.username == "GroupAnonymousBot": 
-            return await bot.reply_to(message, "Anda tidak diperkenankan menggunakan bot ini sebagai Anonymous Admin")
+            await bot.reply_to(
+                message, 
+                ChatTemplates.ANONYMOUS_NOT_ALLOWED
+            )
+            return
             
-        subbed, callback_text = await check_subscription(message, tg_user)
+        subbed, callback_text = await utils.check_subscription(message, tg_user, admin_bot)
         if subbed is False: 
-            return await bot.reply_to(message, callback_text, parse_mode="MarkdownV2")
+            await bot.reply_to(
+                message, 
+                callback_text, 
+                parse_mode="MarkdownV2"
+            )
+            return
 
         args = caption.split(" ")
         prompt = " ".join(args[1:]).strip()
 
         if not prompt: 
-            return await bot.reply_to(message, VISION_CHAT_USAGE_MESSAGE, parse_mode="MarkdownV2")
+            await bot.reply_to(
+                message, 
+                ChatTemplates.VISION_CHAT_USAGE_MESSAGE, 
+                parse_mode="MarkdownV2"
+            )
+            return
 
-        user = await user_handler(tg_user)
+        user = await utils.user_handler(tg_user)
         config = user.config
         
         if config.vision is False: 
-            return await bot.reply_to(message, escape(f"Model Terpilih: `{config.model}`\nSupport Vision: `Tidak`\n\nSebelum menggunakan perintah ini ganti terlebih dahulu Penyedia Model ke `Open Ai V2` (WAJIB) dan Jangan Lupa Model Harus Support Vision\n\nSilahkan kirim gambar menggunakan caption yang diisi dengan perintah\n{VISION_CHAT_USAGE_MESSAGE}"), parse_mode="MarkdownV2")
+            await bot.reply_to(
+                message, 
+                ChatTemplates.VISION_NOT_SUPPORT(config), 
+                parse_mode="MarkdownV2"
+            )
+            return
   
-        photo_uri = await get_photo_uri(message)
+        photo_uri = await utils.get_photo_uri(message, bot)
         prompt = (prompt, photo_uri)
-        result_chunks = await chat(user, prompt)
+        result_chunks = await utils.chat(user, prompt)
         
         for text_chunk in result_chunks: 
-            msg = await bot.reply_to(message, text_chunk, parse_mode="MarkdownV2") 
+            msg = await bot.reply_to(
+                message, 
+                text_chunk, 
+                parse_mode="MarkdownV2"
+            ) 
 
-        # await bot.edit_message_text(text_chunk, msg.chat.id, msg.message_id, parse_mode="MarkdownV2")
         await user.save()
 
 @bot.message_handler(commands=['chat'])
@@ -251,11 +162,19 @@ async def chat_command(message: Message):
     my_bot = await bot.get_me()
 
     if tg_user.username == "GroupAnonymousBot": 
-        return await bot.reply_to(message, "Anda tidak diperkenankan menggunakan bot ini sebagai Anonymous Admin")
+        await bot.reply_to(
+            message, 
+            ChatTemplates.ANONYMOUS_NOT_ALLOWED
+        )
+        return
 
-    subbed, callback_text = await check_subscription(message, tg_user)
+    subbed, callback_text = await utils.check_subscription(message, tg_user, admin_bot)
     if subbed is False: 
-        await bot.reply_to(message, callback_text, parse_mode="MarkdownV2")
+        await bot.reply_to(
+            message, 
+            callback_text, 
+            parse_mode="MarkdownV2"
+        )
     else: 
         if text.startswith("/chat@"): 
             command = text.split("@")
@@ -266,15 +185,23 @@ async def chat_command(message: Message):
         prompt = " ".join(args[1:]).strip()
 
         if not prompt: 
-            return await bot.reply_to(message, CHAT_USAGE_MESSAGE, parse_mode="MarkdownV2")
+            await bot.reply_to(
+                message, 
+                ChatTemplates.CHAT_USAGE_MESSAGE, 
+                parse_mode="MarkdownV2"
+            )
+            return
 
-        user = await user_handler(tg_user)
-        result_chunks = await chat(user, prompt)
+        user = await utils.user_handler(tg_user)
+        result_chunks = await utils.chat(user, prompt)
 
         for text_chunk in result_chunks: 
-            msg = await bot.reply_to(message, text_chunk, parse_mode="MarkdownV2") 
+            msg = await bot.reply_to(
+                message, 
+                text_chunk,
+                parse_mode="MarkdownV2"
+            ) 
             
-        # await bot.edit_message_text(text_chunk, msg.chat.id, msg.message_id, parse_mode="MarkdownV2")
         await user.save()
 
 @bot.message_handler(commands=['desc'])
@@ -289,18 +216,29 @@ async def desc_command(message: Message):
             return
 
     if tg_user.username == "GroupAnonymousBot": 
-        return await bot.reply_to(message, "Anda tidak diperkenankan menggunakan bot ini sebagai Anonymous Admin")
+        await bot.reply_to(
+            message, 
+            ChatTemplates.ANONYMOUS_NOT_ALLOWED
+        )
+        return
 
-    subbed, callback_text = await check_subscription(message, tg_user)
+    subbed, callback_text = await utils.check_subscription(message, tg_user, admin_bot)
     if subbed is False: 
-        await bot.reply_to(message, callback_text, parse_mode="MarkdownV2")
+        await bot.reply_to(
+            message, 
+            callback_text, 
+            parse_mode="MarkdownV2"
+        )
     else: 
-        user = await user_handler(tg_user)
+        user = await utils.user_handler(tg_user)
         config = user.config
         vision = "Ya" if config.vision else "Tidak"
 
-        return await bot.reply_to(message, escape(f"Model Terpilih: `{config.model}`\nSupport Vision: `{vision}`\n\nSebelum menggunakan perintah ini ganti terlebih dahulu Penyedia Model ke `Open Ai V2` (WAJIB) dan Jangan Lupa Model Harus Support Vision\n\nSilahkan kirim gambar menggunakan caption yang diisi dengan perintah\n{VISION_CHAT_USAGE_MESSAGE}"), parse_mode="MarkdownV2")
-        await bot.reply_to(message, f"Sebelum menggunakan perintah ini ganti terlebih dahulu Penyedia Model ke `\"Open Ai V2\"` \(WAJIB\) dan Jangan Lupa Model Harus Support Vision\n\nSilahkan kirim gambar menggunakan caption yang diisi dengan perintah\n{VISION_CHAT_USAGE_MESSAGE}", parse_mode = "MarkdownV2")
+        await bot.reply_to(
+            message, 
+            ChatTemplates.VISION_NOT_SUPPORT(config, vision), 
+            parse_mode="MarkdownV2"
+        )
 
 @bot.message_handler(commands=['clear'])
 async def clear_chat_command(message: Message): 
@@ -314,20 +252,31 @@ async def clear_chat_command(message: Message):
             return
 
     if tg_user.username == "GroupAnonymousBot": 
-        return await bot.reply_to(message, "Anda tidak diperkenankan menggunakan bot ini sebagai Anonymous Admin")
+        await bot.reply_to(
+            message, 
+            ChatTemplates.ANONYMOUS_NOT_ALLOWED
+        )
+        return
 
-    subbed, callback_text = await check_subscription(message, tg_user)
+    subbed, callback_text = await utils.check_subscription(message, tg_user, admin_bot)
     if subbed is False: 
-        await bot.reply_to(message, callback_text, parse_mode="MarkdownV2")
+        await bot.reply_to(
+            message, 
+            callback_text, 
+            parse_mode="MarkdownV2"
+        )
     else: 
-        user = await user_handler(tg_user)
+        user = await utils.user_handler(tg_user)
         config = user.config
         item_name = config.provider.item_name
 
         history = user.history[item_name]
         history.clear()
         
-        await bot.reply_to(message, "Konteks Percakapan Berhasil Di Bersihkan")
+        await bot.reply_to(
+            message, 
+            ChatTemplates.CLEAR_CHAT
+        )
         await user.save()
 
 @bot.message_handler(commands=['clearip'])
@@ -342,14 +291,25 @@ async def clear_ip_command(message: Message):
             return
 
     if tg_user.username == "GroupAnonymousBot": 
-        return await bot.reply_to(message, "Anda tidak diperkenankan menggunakan bot ini sebagai Anonymous Admin")
+        await bot.reply_to(
+            message, 
+            ChatTemplates.ANONYMOUS_NOT_ALLOWED
+        )
+        return
 
-    subbed, callback_text = await check_subscription(message, tg_user)
+    subbed, callback_text = await utils.check_subscription(message, tg_user, admin_bot)
     if subbed is False: 
-        await bot.reply_to(message, callback_text, parse_mode="MarkdownV2")
+        await bot.reply_to(
+            message, 
+            callback_text, 
+            parse_mode="MarkdownV2"
+        )
     else: 
         await db.clear("ip_list")
-        await bot.reply_to(message, "IP List Berhasil Di Reset")
+        await bot.reply_to(
+            message, 
+            ChatTemplates.CLEAR_IP
+        )
 
 @bot.message_handler(commands=['config'])
 async def config_command(message: Message): 
@@ -363,13 +323,25 @@ async def config_command(message: Message):
             return
 
     if tg_user.username == "GroupAnonymousBot": 
-        return await bot.reply_to(message, "Anda tidak diperkenankan menggunakan bot ini sebagai Anonymous Admin")
+        await bot.reply_to(
+            message, 
+            ChatTemplates.ANONYMOUS_NOT_ALLOWED
+        )
+        return
 
-    subbed, callback_text = await check_subscription(message, tg_user)
+    subbed, callback_text = await utils.check_subscription(message, tg_user, admin_bot)
     if subbed is False: 
-        await bot.reply_to(message, callback_text, parse_mode="MarkdownV2")
+        await bot.reply_to(
+            message, 
+            callback_text, 
+            parse_mode="MarkdownV2"
+        )
     else: 
-        await bot.reply_to(message, "Menu Konfigurasi Chat", reply_markup=CONFIG_MENU_MARKUP(tg_user.id))
+        await bot.reply_to(
+            message, 
+            ChatTemplates.CONFIG_MENU_MESSAGE, 
+            reply_markup=ChatTemplates.CONFIG_MENU_MARKUP(tg_user)
+        )
 
 
 @bot.callback_query_handler(func=lambda call: True)
@@ -381,54 +353,47 @@ async def callback_query_feeder(call: CallbackQuery):
     message_id = message.message_id
 
     if tg_user.username == "GroupAnonymousBot": 
-        return await bot.reply_to(message, "Anda tidak diperkenankan menggunakan bot ini sebagai Anonymous Admin")
+        await bot.reply_to(
+            message, 
+            ChatTemplates.ANONYMOUS_NOT_ALLOWED
+        )
+        return
 
-    subbed, callback_text = await check_subscription(message, tg_user)
+    subbed, callback_text = await utils.check_subscription(message, tg_user, admin_bot)
     if subbed is False: 
-        return await bot.answer_callback_query(call.id, callback_text, parse_mode="MarkdownV2")
+        await bot.answer_callback_query(
+            call.id, 
+            callback_text, 
+            parse_mode="MarkdownV2"
+        )
+        return
     
-    user = await user_handler(tg_user)
+    user = await utils.user_handler(tg_user)
     call_data_list = call.data.split(".")
     caller_id, menu, action = call_data_list[:3]
     
     if caller_id != user.id: 
-        return await bot.answer_callback_query(call.id, text="Hanya Yang Memanggil Tombol Ini Yang Bisa Mengakses!", show_alert=True)
+        await bot.answer_callback_query(
+            call.id, 
+            ChatTemplates.INLINE_CALLBACK_UNAUTHORIZED, 
+            show_alert=True
+        )
+        return
     
     user.menu = menu
     user.action = action
 
     if action == "display": 
-        vision = "Ya" if user.config.vision else "Tidak"
-        display_config_message = (
-            "*Chat Config* \n"
-            f"Model \= `{user.config.model}`\n"
-            f"Model Support Vision \= `{vision}`\n"
-            f"Provider \= `{user.config.provider.name}`"
+        await bot.edit_message_text(
+            ChatTemplates.DISPLAY_CONFIG_MESSAGE(user), 
+            chat_id, 
+            message_id, 
+            reply_markup=ChatTemplates.DISPLAY_CONFIG_MARKUP(caller_id), 
+            parse_mode="MarkdownV2"
         )
-
-        markup = InlineKeyboardMarkup(
-            keyboard=[
-                [
-                    InlineKeyboardButton("Kembali", callback_data=f"{caller_id}.config.display_menu"),
-                ]
-            ],
-        )
-        await bot.edit_message_text(display_config_message, chat_id, message_id, reply_markup=markup, parse_mode="MarkdownV2")
     elif action == "change_provider": 
         providers = provider.providers.values()
         change_provider_callback = call_data_list[3:]
-
-        markup = InlineKeyboardMarkup(
-            keyboard=[
-                [
-                    InlineKeyboardButton(provider.name, callback_data=f"{caller_id}.config.change_provider.{provider.item_name}_{provider.name}")
-                    for provider in providers
-                ],
-                [
-                    InlineKeyboardButton("Kembali", callback_data=f"{caller_id}.config.display_menu")
-                ]
-            ]
-        )
 
         if change_provider_callback: 
             item_name, name = change_provider_callback[0].split("_")
@@ -443,21 +408,22 @@ async def callback_query_feeder(call: CallbackQuery):
 
         prev_provider_name = text.replace("Penyedia Sekarang: ", "")
         if prev_provider_name != user.config.provider.name: 
-            await bot.edit_message_text(f"Penyedia Sekarang: `{user.config.provider.name}`", chat_id, message_id, reply_markup=markup, parse_mode="MarkdownV2")
-
-    elif action == "change_model": 
-        item_name = user.config.provider.item_name
-        models = provider.providers[item_name].models
-        change_model_callback = call_data_list[3:]
-
-        markup = InlineKeyboardMarkup(
-            keyboard=[
-                [ InlineKeyboardButton(model.name, callback_data=f"{caller_id}.config.change_model.{model.name}.{model.vision}") ]
-                for model in models   
-            ] + [
-                [ InlineKeyboardButton("Kembali", callback_data=f"{caller_id}.config.display_menu") ]
-            ]
+            await bot.edit_message_text(
+                ChatTemplates.CHANGE_PROVIDER_MESSAGE(user), 
+                chat_id, 
+                message_id, 
+                reply_markup=ChatTemplates.CHANGE_PROVIDER_MARKUP(caller_id), 
+                parse_mode="MarkdownV2"
+            )
+    elif action.startswith("pagemdl_"): 
+        page = int(user.action[8:])
+        await bot.edit_message_reply_markup(
+            chat_id, 
+            message_id, 
+            reply_markup=ChatTemplates.CHANGE_MODEL_MARKUP(user, caller_id, page) 
         )
+    elif action == "change_model": 
+        change_model_callback = call_data_list[3:]
 
         if change_model_callback: 
             model_name, vision, = change_model_callback
@@ -466,11 +432,22 @@ async def callback_query_feeder(call: CallbackQuery):
 
         prev_model_name = text.replace("Model Sekarang: ", "")
         if prev_model_name != user.config.model: 
-            await bot.edit_message_text(f"Model Sekarang: `{user.config.model}`", chat_id, message_id, reply_markup=markup, parse_mode="MarkdownV2")
+            await bot.edit_message_text(
+                ChatTemplates.CHANGE_MODEL_MESSAGE(user).
+                chat_id, 
+                message_id, 
+                reply_markup=ChatTemplates.CHANGE_MODEL_MARKUP(user, caller_id, 0),
+                parse_mode="MarkdownV2"
+            )
 
     elif action == "display_menu": 
-        markup = CONFIG_MENU_MARKUP(user.id)
-        await bot.edit_message_text("Menu Konfigurasi Chat", chat_id, message_id, reply_markup=markup, parse_mode="MarkdownV2")
+        await bot.edit_message_text(
+            ChatTemplates.CONFIG_MENU_MESSAGE, 
+            chat_id, 
+            message_id, 
+            reply_markup=ChatTemplates.CONFIG_MENU_MARKUP(user), 
+            parse_mode="MarkdownV2"
+        )
 
     await user.save()
     await bot.answer_callback_query(call.id)
@@ -482,10 +459,7 @@ async def test_command(message: Message):
     user_id = tg_user.id
     full_name = tg_user.full_name
 
-    user = await ChatUser.get(user_id)
-    if user is None: 
-        user = ChatUser(user_id, full_name)
-        # await user.save()
+    user = await utils.user_handler(user_id)
 
     await bot.reply_to(message, message.json)
     await bot.reply_to(message, my_bot.username)
@@ -499,17 +473,28 @@ async def text_feeder(message: Message):
     reply = message.reply_to_message
     if reply and reply.from_user.username == my_bot.username:  
         if tg_user.username == "GroupAnonymousBot": 
-            return await bot.reply_to(message, "Anda tidak diperkenankan menggunakan bot ini sebagai Anonymous Admin")
+            await bot.reply_to(
+                message, 
+                ChatTemplates.ANONYMOUS_NOT_ALLOWED
+            )
+            return
 
-        subbed, callback_text = await check_subscription(message, tg_user)
+        subbed, callback_text = await utils.check_subscription(message, tg_user, admin_bot)
         if subbed is False: 
-            await bot.reply_to(message, callback_text, parse_mode="MarkdownV2")
+            await bot.reply_to(
+                message, 
+                callback_text, 
+                parse_mode="MarkdownV2"
+            )
         else: 
-            user = await user_handler(tg_user)
-            result_chunks = await chat(user, text)
+            user = await utils.user_handler(tg_user)
+            result_chunks = await utils.chat(user, text)
 
             for text_chunk in result_chunks: 
-                msg = await bot.reply_to(message, text_chunk, parse_mode="MarkdownV2")
+                msg = await bot.reply_to(
+                    message, 
+                    text_chunk, 
+                    parse_mode="MarkdownV2"
+                )
 
-            # await bot.edit_message_text(text_chunk, msg.chat.id, msg.message_id, parse_mode="MarkdownV2")
             await user.save()
