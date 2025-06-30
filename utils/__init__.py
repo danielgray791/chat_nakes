@@ -29,7 +29,7 @@ async def check_subscription(msg: Message, user: User, admin_bot: AsyncTeleBot) 
         admininfoseminar_id = ALLOWED_GROUPS.get("admininfoseminar")
         
         flagged = ["left", "restricted", "banned"]
-        groups = groups_map.values()
+        groups = ALLOWED_GROUPS.values()
 
         for group_id in groups: 
             if group_id == admininfoseminar_id: 
