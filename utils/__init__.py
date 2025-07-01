@@ -1,5 +1,7 @@
 import asyncio
 
+import filetype
+
 from telebot.types import Message, User
 from telebot.asyncio_helper import ApiException
 from telebot.async_telebot import AsyncTeleBot
