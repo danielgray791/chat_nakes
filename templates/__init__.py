@@ -90,7 +90,7 @@ class Chat:
             keyboard=[
                 [
                     InlineKeyboardButton(provider.name, callback_data=f"{caller_id}.config.change_provider.{provider.item_name}_{provider.name}")
-                    for provider in providers
+                    for provider in providers.values()
                 ],
                 [
                     InlineKeyboardButton("Kembali", callback_data=f"{caller_id}.config.display_menu")
@@ -100,7 +100,7 @@ class Chat:
     
     @staticmethod
     def CHANGE_PROVIDER_MESSAGE(user: chatuser.ChatUser) -> str: 
-        return f"Penyedia Sekarang: `{user.config.provider.name}`", 
+        return f"Penyedia Sekarang: `{user.config.provider.name}`"
 
     @staticmethod
     def CHANGE_MODEL_MARKUP(user: chatuser.ChatUser, caller_id: int, page: int) -> InlineKeyboardMarkup: 

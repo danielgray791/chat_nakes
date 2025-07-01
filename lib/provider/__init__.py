@@ -158,19 +158,19 @@ class Provider:
         model_choices_page = []
         limit = 8
 
-        page = []
-        for idx, model in enumerate(models): 
-            if len(page) % limit == 0: 
-                model_choices_page.append(page)
-                page = []
+        choices_page = []
+        for idx, model in enumerate(self.models): 
+            if len(choices_page) and len(choices_page) % limit == 0: 
+                model_choices_page.append(choices_page)
+                choices_page = []
                 
-            page.append(
-                InlineKeyboardButton(model.name, callback_data=f"{caller_id}.config.change_model.{model.name}.{model.vision}") 
+            choices_page.append(
+                [InlineKeyboardButton(model.name, callback_data=f"{caller_id}.config.change_model.{model.name}.{model.vision}")]
             )
 
-        model_choices_page.append(page)
+        model_choices_page.append(choices_page)
 
-        total_pages = len(models)
+        total_pages = len(model_choices_page)
         page = max(0, min(page, total_pages - 1))  # Batasi page agar tidak out of range
         keyboard = model_choices_page[page][:]
 
@@ -182,7 +182,9 @@ class Provider:
 
         if nav_buttons:
             keyboard.append(nav_buttons)
-
+        
+        keyboard.append([InlineKeyboardButton("Kembali", callback_data=f"{caller_id}.config.display_menu")])
+        
         return InlineKeyboardMarkup(keyboard)
 
 

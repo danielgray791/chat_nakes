@@ -5,6 +5,7 @@ from telebot.asyncio_helper import ApiException
 from telebot.async_telebot import AsyncTeleBot
 
 import lib.provider as provider
+from lib.provider import split_message, escape
 from lib.provider.models.chatuser import ChatUser
 from templates import Chat as ChatTemplates
 

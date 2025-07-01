@@ -39,6 +39,9 @@ load_dotenv()
 TOKEN = os.getenv("TOKEN")
 ADMIN_TOKEN = os.getenv("ADMIN_TOKEN")
 WEBHOOK = os.getenv("WEBHOOK")
+TOKEN = "6865631962:AAHEFF4GmR1Y78cnLEold1IabrxGtP29o7I"
+ADMIN_TOKEN = "7371600782:AAGUeHAcei8cUFw-rWSuGuuqp9H0XZioBmY"
+WEBHOOK = "https://a568-35-234-13-12.ngrok-free.app"
 
 admin_bot = AsyncTeleBot(ADMIN_TOKEN)
 bot = AsyncTeleBot(TOKEN)
@@ -351,6 +354,7 @@ async def callback_query_feeder(call: CallbackQuery):
     text = message.text
     chat_id = message.chat.id
     message_id = message.message_id
+    reply_markup = message.reply_markup
 
     if tg_user.username == "GroupAnonymousBot": 
         await bot.reply_to(
@@ -430,8 +434,17 @@ async def callback_query_feeder(call: CallbackQuery):
             user.config.model = model_name
             user.config.vision = vision == "True"
 
-        prev_model_name = text.replace("Model Sekarang: ", "")
-        if prev_model_name != user.config.model: 
+        if text.startswith("Model Sekarang: "): 
+            prev_model_name = text[:16]
+            if prev_model_name != user.config.model: 
+                await bot.edit_message_text(
+                    ChatTemplates.CHANGE_MODEL_MESSAGE(user),
+                    chat_id, 
+                    message_id,
+                    reply_markup=reply_markup,
+                    parse_mode="MarkdownV2"
+                )
+        else: 
             await bot.edit_message_text(
                 ChatTemplates.CHANGE_MODEL_MESSAGE(user),
                 chat_id, 
