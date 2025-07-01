@@ -217,7 +217,7 @@ providers: Mapping[str, Provider] = {
     "scira": Provider(
         name="NAKES V3",
         item_name="scira",
-        default_model="GPT o4 Mini",
+        default_model="GPT o3",
         models=[
             Model(name="GPT o3", id="scira-o3", vision=True),
             Model(name="GPT 4o mini", id="scira-4o-mini", vision=True),
