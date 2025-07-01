@@ -39,9 +39,6 @@ load_dotenv()
 TOKEN = os.getenv("TOKEN")
 ADMIN_TOKEN = os.getenv("ADMIN_TOKEN")
 WEBHOOK = os.getenv("WEBHOOK")
-TOKEN = "6865631962:AAHEFF4GmR1Y78cnLEold1IabrxGtP29o7I"
-ADMIN_TOKEN = "7371600782:AAGUeHAcei8cUFw-rWSuGuuqp9H0XZioBmY"
-WEBHOOK = "https://a568-35-234-13-12.ngrok-free.app"
 
 admin_bot = AsyncTeleBot(ADMIN_TOKEN)
 bot = AsyncTeleBot(TOKEN)
