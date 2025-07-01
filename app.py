@@ -65,7 +65,7 @@ async def webhook(request: Request):
             async with session.post(WEBHOOK + "/handle_updates", data=raw, headers={"Content-Type": "application/json"},timeout=1) as response: 
                 pass
     except Exception as e: 
-        print("Error: ",e)
+        print(f"Error: {e}")
 
     return Response("ok", status_code=200)
 
@@ -73,7 +73,7 @@ async def del_webhook(request: Request):
     try: 
         await bot.delete_webhook()
     except Exception as e: 
-        print("Error: ", traceback.print_exc())
+        print(f"Error: {traceback.print_exc()}")
 
     return Response("Webhook successfully deleted!", status_code=200)
 
