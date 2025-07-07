@@ -202,7 +202,7 @@ providers: Mapping[str, Provider] = {
     "artifacts": Provider(
         name="NAKES V2",
         item_name="artifacts",
-        default_model="GPT o3",
+        default_model="GPT 4 Dot 5 Preview",
         models=[
             Model(name="GPT o3", id="o3", vision=True),
             Model(name="GPT o3 Mini", id="o3-mini", vision=True),
