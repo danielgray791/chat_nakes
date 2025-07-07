@@ -96,8 +96,9 @@ async def photo_handler(message: Message):
     tg_user = message.from_user
     caption = message.caption + " "
     my_bot = await bot.get_me()
+    reply = message.reply_to_message
     
-    if caption and caption.startswith("/desc"): 
+    if caption and caption.startswith("/desc") or reply and reply.from_user.username == my_bot.username: 
 
         if caption.startswith("/desc@"): 
             command = caption.split("@")
@@ -120,8 +121,11 @@ async def photo_handler(message: Message):
             )
             return
 
-        args = caption.split(" ")
-        prompt = " ".join(args[1:]).strip()
+        prompt = caption
+        if caption.startswith("/desc"): 
+            args = caption.split(" ")
+            prompt = " ".join(args[1:]).strip()
+
 
         if not prompt: 
             await bot.reply_to(
@@ -151,7 +155,7 @@ async def photo_handler(message: Message):
                 message, 
                 text_chunk, 
                 parse_mode="MarkdownV2"
-            ) 
+            )
 
         await user.save()
 
