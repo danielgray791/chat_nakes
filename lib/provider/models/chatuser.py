@@ -5,7 +5,7 @@ from .. import Corcel, Artifacts, Scira, get_instance, providers
 from dataclasses import dataclass
 from typing import Dict, Optional, List, Any, Union
 
-DEFAULT_PROVIDER = providers["scira"]
+DEFAULT_PROVIDER = providers["artifacts"]
 db = MongoDB()
 
 @dataclass
@@ -97,8 +97,8 @@ class ChatUser:
 
         history = self.history[item_name]
 
-        if len(history) >= 40: 
-            history = history[:2] + history[20:]
+        if len(history) >= 10: 
+            history = history[:2] + history[5:]
 
         data_dict = self.to_dict()
         res = await db.set(data_dict)

@@ -5,7 +5,12 @@ from .artifacts import Artifacts
 from .scira import Scira
 
 from dataclasses import dataclass
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Mapping
+
+from telebot.types import (
+    InlineKeyboardMarkup,
+    InlineKeyboardButton
+)
 
 def escape(text, flag=0): 
     def find_all_index(str, pattern):
@@ -132,7 +137,6 @@ def split_message(message, max_length=4096):
 
 @dataclass
 class Model: 
-    number: int
     name: str
     id: str
     vision: bool
@@ -149,46 +153,89 @@ class Provider:
             if model.name == model_name: 
                 return model
         return None
+    
+    def inline_keyboard_markup(self, caller_id: int, page: int) -> InlineKeyboardMarkup: 
+        model_choices_page = []
+        limit = 8
 
-providers = {
+        choices_page = []
+        for idx, model in enumerate(self.models): 
+            if len(choices_page) and len(choices_page) % limit == 0: 
+                model_choices_page.append(choices_page)
+                choices_page = []
+                
+            choices_page.append(
+                [InlineKeyboardButton(model.name, callback_data=f"{caller_id}.config.change_model.{model.name}.{model.vision}")]
+            )
+
+        model_choices_page.append(choices_page)
+
+        total_pages = len(model_choices_page)
+        page = max(0, min(page, total_pages - 1))  # Batasi page agar tidak out of range
+        keyboard = model_choices_page[page][:]
+
+        nav_buttons = []
+        if page > 0:
+            nav_buttons.append(InlineKeyboardButton("⏪ Prev", callback_data=f"{caller_id}.config.pagemdl_{page-1}"))
+        if page < total_pages - 1:
+            nav_buttons.append(InlineKeyboardButton("Next ⏩", callback_data=f"{caller_id}.config.pagemdl_{page+1}"))
+
+        if nav_buttons:
+            keyboard.append(nav_buttons)
+        
+        keyboard.append([InlineKeyboardButton("Kembali", callback_data=f"{caller_id}.config.display_menu")])
+        
+        return InlineKeyboardMarkup(keyboard)
+
+
+providers: Mapping[str, Provider] = {
     "corcel": Provider(
         name="NAKES V1",
         item_name="corcel",
         default_model="GPT 4 dot 0",
         models=[
-            Model(number=1, name="GPT 4 dot 0", id="gpt-4o", vision=False),
-            Model(number=2, name="Claude 3 dot 5 Sonnet", id="claude-3-5-sonnet-20241022", vision=False),
-            Model(number=3, name="Cortext Ultra", id="cortext-ultra",  vision=False)
+            Model(name="GPT 4 dot 0", id="gpt-4o", vision=False),
+            Model(name="Claude 3 dot 5 Sonnet", id="claude-3-5-sonnet-20241022", vision=False),
+            Model(name="Cortext Ultra", id="cortext-ultra",  vision=False)
         ]
     ),
     "artifacts": Provider(
         name="NAKES V2",
         item_name="artifacts",
-        default_model="GPT 4 dot 5 preview",
+        default_model="GPT o3",
         models=[
-            Model(number=1, name="Claude 3 dot 7 Sonnet", id="claude-3-7-sonnet-latest", vision=True),
-            Model(number=2, name="Claude 3 dot 5 Sonnet", id="claude-3-5-sonnet-latest", vision=True),
-            Model(number=3, name="Claude 3 dot 5 Haiku", id="claude-3-5-haiku-latest", vision=True),
-            Model(number=4, name="GPT 4 dot 1", id="gpt-4.1", vision=True),
-            Model(number=5, name="GPT 4 dot 1 mini", id="gpt-4.1-mini", vision=True),
-            Model(number=6, name="GPT 4 dot 1 nano", id="gpt-4.1-nano", vision=True),
-            Model(number=7, name="GPT 4 dot 5 preview", id="gpt-4.5-preview", vision=True),
-            Model(number=8, name="Gemini 2 dot 5 Pro Exp", id="gemini-2.5-pro-exp-03-25", vision=False),
+            Model(name="GPT o3", id="o3", vision=True),
+            Model(name="GPT o3 Mini", id="o3-mini", vision=True),
+            Model(name="GPT o4 Mini", id="o4-mini", vision=True),
+            Model(name="GPT 4o", id="gpt-4o", vision=True),
+            Model(name="GPT 4 Dot 5 Preview", id="gpt-4.5-preview", vision=True),
+            Model(name="Claude 4 Dot 0 Sonnet ", id="claude-sonnet-4-20250514", vision=True),
+            Model(name="Claude 3 Dot 7 Sonnet", id="claude-3-7-sonnet-latest", vision=True),
+            Model(name="Claude 4 Dot 0 Opus", id="claude-opus-4-20250514", vision=True),
+            Model(name="Gemini 2 Dot 5 Pro Prev", id="gemini-2.5-pro-preview-05-06", vision=True)
         ]
     ),
     "scira": Provider(
         name="NAKES V3",
         item_name="scira",
-        default_model="GPT o4 Mini",
+        default_model="GPT o3",
         models=[
-            Model(number=1, name="GPT 4o latest", id="scira-4o", vision=True),
-            Model(number=2, name="GPT o4 Mini", id="scira-o4-mini", vision=True),
-            Model(number=3, name="Grok 3 dot 0 mini", id="scira-grok-3-mini", vision=True),
-            Model(number=4, name="Grok 3 dot 0", id="scira-default", vision=True),
-            Model(number=5, name="Gemini 2 dot 5 Flash", id="scira-google", vision=True),
-            Model(number=6, name="Gemini 2 dot 5 Pro", id="scira-google-pro", vision=True),
-            Model(number=7, name="Sonnet 4 dot 0 Thinking", id="scira-anthropic-thinking", vision=True),
-            Model(number=8, name="Sonnet 4 dot 0", id="scira-anthropic", vision=True),  
+            Model(name="GPT o3", id="scira-o3", vision=True),
+            Model(name="GPT 4o mini", id="scira-4o-mini", vision=True),
+            Model(name="GPT o4 Mini", id="scira-o4-mini", vision=True),
+            Model(name="Sonnet 4 Thinking", id="scira-anthropic-thinking", vision=True),
+            Model(name="Sonnet 4", id="scira-anthropic", vision=True),  
+            Model(name="Opus 4", id="scira-opus", vision=True),  
+            Model(name="Opus 4 Thinking", id="scira-opus-pro", vision=True),
+            Model(name="Gemini 2 dot 5 Flash", id="scira-google", vision=True),
+            Model(name="Gemini 2 dot 5 Pro", id="scira-google-pro", vision=True),  
+            Model(name="Grok 3 mini", id="scira-grok-3", vision=True),
+            Model(name="Grok 3", id="scira-default", vision=True),
+            Model(name="Grok 2 Vision", id="scira-vision", vision=True),
+            Model(name="Llama 4 Maverick", id="scira-llama-4", vision=True),
+            Model(name="Qwen 3 32B", id="scira-qwen-32b", vision=True),
+            Model(name="QWQ 32B", id="scira-qwq", vision=True),
+            Model(name="Mistral Small", id="scira-mistral", vision=True)
         ]
     )
 }
@@ -204,5 +251,3 @@ def get_instance(name: str = "corcel"):
         else scira_ins if name == "scira"
         else None
     )
-
-
