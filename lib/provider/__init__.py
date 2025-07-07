@@ -202,16 +202,17 @@ providers: Mapping[str, Provider] = {
     "artifacts": Provider(
         name="NAKES V2",
         item_name="artifacts",
-        default_model="GPT 4 dot 5 preview",
+        default_model="GPT o3",
         models=[
-            Model(name="Claude 3 dot 7 Sonnet", id="claude-3-7-sonnet-latest", vision=True),
-            Model(name="Claude 3 dot 5 Sonnet", id="claude-3-5-sonnet-latest", vision=True),
-            Model(name="Claude 3 dot 5 Haiku", id="claude-3-5-haiku-latest", vision=True),
-            Model(name="GPT 4 dot 1", id="gpt-4.1", vision=True),
-            Model(name="GPT 4 dot 1 mini", id="gpt-4.1-mini", vision=True),
-            Model(name="GPT 4 dot 1 nano", id="gpt-4.1-nano", vision=True),
-            Model(name="GPT 4 dot 5 preview", id="gpt-4.5-preview", vision=True),
-            Model(name="Gemini 2 dot 5 Pro Exp", id="gemini-2.5-pro-exp-03-25", vision=False),
+            Model(name="GPT o3", id="o3", vision=True),
+            Model(name="GPT o3 Mini", id="o3-mini", vision=True),
+            Model(name="GPT o4 Mini", id="o4-mini", vision=True),
+            Model(name="GPT 4o", id="gpt-4o", vision=True),
+            Model(name="GPT 4 Dot 5 Preview", id="gpt-4.5-preview", vision=True),
+            Model(name="Claude 4 Dot 0 Sonnet ", id="claude-sonnet-4-20250514", vision=True),
+            Model(name="Claude 3 Dot 7 Sonnet", id="claude-3-7-sonnet-latest", vision=True),
+            Model(name="Claude 4 Dot 0 Opus", id="claude-opus-4-20250514", vision=True),
+            Model(name="Gemini 2 Dot 5 Pro Prev", id="gemini-2.5-pro-preview-05-06", vision=True)
         ]
     ),
     "scira": Provider(
@@ -250,5 +251,3 @@ def get_instance(name: str = "corcel"):
         else scira_ins if name == "scira"
         else None
     )
-
-
