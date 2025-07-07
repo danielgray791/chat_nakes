@@ -212,7 +212,7 @@ providers: Mapping[str, Provider] = {
             Model(name="Claude 4 Dot 0 Sonnet ", id="claude-sonnet-4-20250514", vision=True),
             Model(name="Claude 3 Dot 7 Sonnet", id="claude-3-7-sonnet-latest", vision=True),
             Model(name="Claude 4 Dot 0 Opus", id="claude-opus-4-20250514", vision=True),
-            Model(name="Gemini 2 Dot 5 Pro Prev", id="gemini-2.5-pro-preview-05-06", vision=True)
+            Model(name="Gemini 2 Dot 5 Pro Prev", id="models/gemini-2.5-pro-preview-05-06", vision=True)
         ]
     ),
     "scira": Provider(
