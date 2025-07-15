@@ -3,6 +3,7 @@ import re
 from .corcel import Corcel
 from .artifacts import Artifacts
 from .scira import Scira
+from .ddg import DuckDuckGo
 
 from dataclasses import dataclass
 from typing import Dict, List, Union, Mapping
@@ -237,6 +238,18 @@ providers: Mapping[str, Provider] = {
             Model(name="QWQ 32B", id="scira-qwq", vision=True),
             Model(name="Mistral Small", id="scira-mistral", vision=True)
         ]
+    ),
+    "duckduckgo": Provider(
+        name="NAKES V4",
+        item_name="duckduckgo",
+        default_model="GPT o3",
+        models=[
+            Model(name="GPT o4 Mini", id="o4-mini", vision=False),
+            Model(name="GPT 4o mini", id="scira-4o-mini", vision=False),
+            Model(name="Claude 3 dot 5 Haiku", id="claude-3-5-haiku-latest", vision=False),
+            Model(name="LLAMA 4 Scout", id="meta-llama/Llama-4-Scout-17B-16E-Instruct", vision=False),  
+            Model(name="Mistral Small", id="mistralai/Mistral-Small-24B-Instruct-2501", vision=False),  
+        ]
     )
 }
 
@@ -244,10 +257,11 @@ corcel_ins = Corcel()
 artifacts_ins = Artifacts()
 scira_ins = Scira()
 
-def get_instance(name: str = "corcel"): 
+async def get_instance(name: str = "corcel") -> Union[Corcel, Artifacts, Scira, DuckDuckGo, None]: 
     return (
         corcel_ins if name == "corcel"
         else artifacts_ins if name == "artifacts"
         else scira_ins if name == "scira"
+        else await DuckDuckGo.build() if name == "duckduckgo"
         else None
     )
