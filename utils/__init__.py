@@ -73,6 +73,7 @@ async def chat(user: ChatUser, prompt: Union[str, Tuple[str, str]]) -> List[str]
     item_name = config.provider.item_name
     selected_provider = provider.providers[item_name]
     selected_model = selected_provider.get_model(config.model)
+    chat_client = await model_ins(item_name)
 
     kwargs = {}
     kwargs["model"] = selected_model.id
@@ -81,7 +82,7 @@ async def chat(user: ChatUser, prompt: Union[str, Tuple[str, str]]) -> List[str]
     print("Chat: ", {"prompt": prompt, "kwargs": kwargs})
 
     # print(config)
-    response = await asyncio.to_thread(model_ins.chat, prompt, **kwargs)
+    response = await asyncio.to_thread(chat_client.chat, prompt, **kwargs)
     print("Chat Response", {"response": response})
     
     chunked_response = split_message(escape(response))
