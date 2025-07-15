@@ -5,7 +5,7 @@ from .. import Corcel, Artifacts, Scira, get_instance, providers
 from dataclasses import dataclass
 from typing import Dict, Optional, List, Any, Union
 
-DEFAULT_PROVIDER = providers["artifacts"]
+DEFAULT_PROVIDER = providers["duckduckgo"]
 db = MongoDB()
 
 @dataclass
