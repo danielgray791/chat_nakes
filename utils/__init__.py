@@ -1,5 +1,6 @@
 import asyncio
 import base64
+import inspect
 
 import filetype
 
@@ -82,7 +83,11 @@ async def chat(user: ChatUser, prompt: Union[str, Tuple[str, str]]) -> List[str]
     print("Chat: ", {"prompt": prompt, "kwargs": kwargs})
 
     # print(config)
-    response = await asyncio.to_thread(chat_client.chat, prompt, **kwargs)
+    if inspect.iscoroutinefunction(chat_client.chat):
+        response = await chat_client.chat(prompt, **kwargs)
+    else:
+        response = await asyncio.to_thread(chat_client.chat, prompt, **kwargs)
+        
     print("Chat Response", {"response": response})
     
     chunked_response = split_message(escape(response))
