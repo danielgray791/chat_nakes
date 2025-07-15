@@ -115,7 +115,7 @@ class ChatUser:
         config = user["config"]
         provider = config["provider"]
         provider_item_name = provider["item_name"]
-        model_ins = await get_instance(provider_item_name)
+        model_ins = get_instance
 
         return cls(
             user_id=str(user["id"]),
