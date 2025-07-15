@@ -242,7 +242,7 @@ providers: Mapping[str, Provider] = {
     "duckduckgo": Provider(
         name="NAKES V4",
         item_name="duckduckgo",
-        default_model="GPT o3",
+        default_model="GPT o4 Mini",
         models=[
             Model(name="GPT o4 Mini", id="o4-mini", vision=False),
             Model(name="GPT 4o mini", id="scira-4o-mini", vision=False),
