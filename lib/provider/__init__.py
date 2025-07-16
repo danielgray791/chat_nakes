@@ -191,7 +191,7 @@ class Provider:
 
 providers: Mapping[str, Provider] = {
     "corcel": Provider(
-        name="NAKES V1",
+        name="V1",
         item_name="corcel",
         default_model="GPT 4 dot 0",
         models=[
@@ -201,7 +201,7 @@ providers: Mapping[str, Provider] = {
         ]
     ),
     "artifacts": Provider(
-        name="NAKES V2",
+        name="V2",
         item_name="artifacts",
         default_model="GPT 4 Dot 5 Preview",
         models=[
@@ -217,7 +217,7 @@ providers: Mapping[str, Provider] = {
         ]
     ),
     "scira": Provider(
-        name="NAKES V3",
+        name="V3",
         item_name="scira",
         default_model="GPT o3",
         models=[
@@ -240,7 +240,7 @@ providers: Mapping[str, Provider] = {
         ]
     ),
     "duckduckgo": Provider(
-        name="NAKES V4",
+        name="V4",
         item_name="duckduckgo",
         default_model="GPT o4 Mini",
         models=[
