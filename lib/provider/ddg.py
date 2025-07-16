@@ -81,7 +81,7 @@ class DuckDuckGo:
                 except Exception as e: 
                     pass
 
-                await asyncio.sleep(3)
+                await asyncio.sleep(60)
             
         loop = asyncio.get_event_loop()
         loop.create_task(alive())
