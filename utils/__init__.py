@@ -93,7 +93,7 @@ async def chat(user: ChatUser, prompt: Union[str, Tuple[str, str]]) -> List[str]
     chunked_response = split_message(escape(response))
     return chunked_response
 
-async def get_photo_uri(message: Message, bot: AsyncTeleBot, ) -> str: 
+async def get_photo_uri(message: Message, bot: AsyncTeleBot) -> str: 
     photo_id = message.photo[-1].file_id
     file_info = await bot.get_file(photo_id)
 
