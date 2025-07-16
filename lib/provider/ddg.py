@@ -109,13 +109,12 @@ class DuckDuckGo:
             return result.stdout.strip()
         else: 
             headers = {
-                'content-type': 'application/x-www-form-urlencoded',
+                "content-type": "application/x-www-form-urlencoded"
             }
-
             params = {
                 "hash": self.x_vqd_hash_1
             }
-            resp = await self.__make_request("GET", "https://gethash-api.vercel.app/get-hash", params=params)
+            resp = await self.__make_request("GET", "https://gethash-api.vercel.app/get-hash", params=params, headers=headers)
             return resp.json().get("hash")
 
     async def get_xfe_version(self) -> str: 
