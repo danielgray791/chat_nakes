@@ -87,7 +87,8 @@ async def chat(user: ChatUser, prompt: Union[str, Tuple[str, str]]) -> List[str]
         response = await chat_client.chat(prompt, **kwargs)
     else:
         response = await asyncio.to_thread(chat_client.chat, prompt, **kwargs)
-        
+    
+    response = response.replace("scira.ai", "chat.openai.com").replace("fragments.e2b.dev", "chat.openai.com")
     print("Chat Response", {"response": response})
     
     chunked_response = split_message(escape(response))
