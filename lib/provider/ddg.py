@@ -5,6 +5,7 @@ import json
 import hashlib
 import subprocess
 import re
+import traceback
 
 from typing import Optional, List, Mapping
 
@@ -65,7 +66,7 @@ class DuckDuckGo:
             "x-vqd-accept": "1",
         }
 
-        async def alive(): 
+        async def alive(delay: float): 
             while True: 
                 try: 
                     resp = await self.__make_request(
@@ -73,18 +74,21 @@ class DuckDuckGo:
                         self.main_url + "/duckchat/v1/status",
                         headers=headers, 
                     )
+                    x_vqd_hash_1 = resp.headers.get("x-vqd-hash-1")
+                    if not await self.make_xvqd_hash(x_vqd_hash_1): 
+                        continue
 
-                    self.x_vqd_hash_1 = resp.headers.get("x-vqd-hash-1", self.x_vqd_hash_1)
+                    self.x_vqd_hash_1 = x_vqd_hash_1
                     self.x_fe_version = await self.get_xfe_version()
                 except requests.RequestException as e: 
                     pass
                 except Exception as e: 
                     pass
 
-                await asyncio.sleep(60)
+                await asyncio.sleep(delay)
             
         loop = asyncio.get_event_loop()
-        loop.create_task(alive())
+        loop.create_task(alive(5))
 
         while not self.x_vqd_hash_1 and not self.x_fe_version: 
             await asyncio.sleep(0.25)
@@ -99,20 +103,23 @@ class DuckDuckGo:
         })
         return base64.b64encode(payload.encode()).decode()
     
-    async def make_xvqd_hash(self, source: str = "web") -> str: 
+    async def make_xvqd_hash(self, xvqd_hash: str = "", source: str = "web") -> str: 
         if source == "cmd": 
             result = subprocess.run(
-                ["node", "utils/xvqd_hash.js", self.x_vqd_hash_1],
+                ["node", "utils/xvqd_hash.js", xvqd_hash or self.x_vqd_hash_1],
                 capture_output=True,
                 text=True
             )
+            if result.stderr.strip(): 
+                print("[XVQD_ERROR_HASH] {result.stderr.strip()}")
+
             return result.stdout.strip()
         else: 
             headers = {
                 "content-type": "application/x-www-form-urlencoded"
             }
             params = {
-                "hash": self.x_vqd_hash_1
+                "hash": xvqd_hash or self.x_vqd_hash_1
             }
             resp = await self.__make_request("GET", "https://gethash-api.vercel.app/get-hash", params=params, headers=headers)
             return resp.json().get("hash")
@@ -191,8 +198,10 @@ class DuckDuckGo:
 
 async def main(): 
     client = await DuckDuckGo.build()
-    resp = await client.chat("apakah game24 bisa dibikin aturan game judi?")
-    print(resp)
+    while True: 
+        resp = await client.chat("hi apakabar?")
+        print(resp)
+        await asyncio.sleep(3)
 
 if __name__ == "__main__": 
     asyncio.run(main())
