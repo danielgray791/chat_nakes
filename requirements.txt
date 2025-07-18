@@ -9,3 +9,4 @@ gradio_client
 python-dotenv
 starlette
 uvicorn
+pillow
