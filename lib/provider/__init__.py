@@ -245,7 +245,7 @@ providers: Mapping[str, Provider] = {
         default_model="GPT o4 Mini",
         models=[
             Model(name="GPT o4 Mini", id="o4-mini", vision=False),
-            Model(name="GPT 4o mini", id="scira-4o-mini", vision=False),
+            Model(name="GPT 4o mini", id="gpt-4o-mini", vision=False),
             Model(name="Claude 3 dot 5 Haiku", id="claude-3-5-haiku-latest", vision=False),
             Model(name="LLAMA 4 Scout", id="meta-llama/Llama-4-Scout-17B-16E-Instruct", vision=False),  
             Model(name="Mistral Small", id="mistralai/Mistral-Small-24B-Instruct-2501", vision=False),  
