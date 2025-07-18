@@ -86,6 +86,8 @@ async def chat(user: ChatUser, prompt: Union[str, Tuple[str, str]]) -> List[str]
     if inspect.iscoroutinefunction(chat_client.chat): 
         try:
             response = await chat_client.chat(prompt, **kwargs)
+        except Exception as e: 
+            print(e)
         finally:
             # Always call destroy instance, even if an exception occurs
             await chat_client.destroy()
