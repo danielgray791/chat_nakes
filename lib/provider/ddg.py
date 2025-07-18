@@ -5,6 +5,7 @@ import json
 import hashlib
 import subprocess
 import re
+import os
 import traceback
 
 from typing import Optional, List, Mapping
@@ -29,6 +30,7 @@ class DuckDuckGo:
         }
         self.x_vqd_hash_1 = ""
         self.x_fe_version = ""
+        self.task_alive = None
 
     @classmethod
     async def build(cls) -> "DuckDuckGo": 
@@ -81,14 +83,18 @@ class DuckDuckGo:
                     self.x_vqd_hash_1 = x_vqd_hash_1
                     self.x_fe_version = await self.get_xfe_version()
                 except requests.RequestException as e: 
+                    print("[Alive Request Exception]: {e}")
                     pass
+                except asyncio.CancelledError: 
+                    return
                 except Exception as e: 
+                    print("[Alive Normal Exception]: {e}")
                     pass
 
                 await asyncio.sleep(delay)
             
         loop = asyncio.get_event_loop()
-        loop.create_task(alive(25))
+        self.task_alive = loop.create_task(alive(30))
 
         while not self.x_vqd_hash_1 and not self.x_fe_version: 
             await asyncio.sleep(0.25)
@@ -202,6 +208,9 @@ class DuckDuckGo:
             resp_text += c_msg
 
         return resp_text
+    
+    def destroy(self): 
+        self.task_alive.cancel()
 
 async def main(): 
     client = await DuckDuckGo.build()
