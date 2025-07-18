@@ -85,6 +85,9 @@ async def chat(user: ChatUser, prompt: Union[str, Tuple[str, str]]) -> List[str]
     # print(config)
     if inspect.iscoroutinefunction(chat_client.chat):
         response = await chat_client.chat(prompt, **kwargs)
+
+        # destroy instance: 
+        chat_client.destroy()
     else:
         response = await asyncio.to_thread(chat_client.chat, prompt, **kwargs)
     
