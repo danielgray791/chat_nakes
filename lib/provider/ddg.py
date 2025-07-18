@@ -83,12 +83,12 @@ class DuckDuckGo:
                     self.x_vqd_hash_1 = x_vqd_hash_1
                     self.x_fe_version = await self.get_xfe_version()
                 except requests.RequestException as e: 
-                    print("[Alive Request Exception]: {e}")
+                    print(f"[Alive Request Exception]: {e}")
                     pass
                 except asyncio.CancelledError: 
                     return
                 except Exception as e: 
-                    print("[Alive Normal Exception]: {e}")
+                    print(f"[Alive Normal Exception]: {e}")
                     pass
 
                 await asyncio.sleep(delay)
