@@ -209,15 +209,25 @@ class DuckDuckGo:
 
         return resp_text
     
-    def destroy(self): 
-        self.task_alive.cancel()
+    async def destroy(self): 
+        try:
+            self.task_alive.cancel()
+            await self.task_alive
+        except asyncio.CancelledError:
+            pass  # Task dibatalkan dengan sukses
 
 async def main(): 
     client = await DuckDuckGo.build()
-    while True: 
+    i = 0
+
+    print(asyncio.all_tasks())
+    while i < 3: 
         resp = await client.chat("hi apakabar?")
         print(resp)
         await asyncio.sleep(3)
+        i += 1
+    await client.destroy()
+    print(asyncio.all_tasks())
 
 if __name__ == "__main__": 
     asyncio.run(main())
