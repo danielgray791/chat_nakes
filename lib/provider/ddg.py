@@ -88,7 +88,7 @@ class DuckDuckGo:
                 await asyncio.sleep(delay)
             
         loop = asyncio.get_event_loop()
-        loop.create_task(alive(5))
+        loop.create_task(alive(25))
 
         while not self.x_vqd_hash_1 and not self.x_fe_version: 
             await asyncio.sleep(0.25)
@@ -104,25 +104,28 @@ class DuckDuckGo:
         return base64.b64encode(payload.encode()).decode()
     
     async def make_xvqd_hash(self, xvqd_hash: str = "", source: str = "web") -> str: 
-        if source == "cmd": 
-            result = subprocess.run(
-                ["node", "utils/xvqd_hash.js", xvqd_hash or self.x_vqd_hash_1],
-                capture_output=True,
-                text=True
-            )
-            if result.stderr.strip(): 
-                print("[XVQD_ERROR_HASH] {result.stderr.strip()}")
+        try: 
+            if source == "cmd": 
+                result = subprocess.run(
+                    ["node", "utils/xvqd_hash.js", xvqd_hash or self.x_vqd_hash_1],
+                    capture_output=True,
+                    text=True
+                )
+                if result.stderr.strip(): 
+                    print("[XVQD_ERROR_HASH] {result.stderr.strip()}")
 
-            return result.stdout.strip()
-        else: 
-            headers = {
-                "content-type": "application/x-www-form-urlencoded"
-            }
-            params = {
-                "hash": xvqd_hash or self.x_vqd_hash_1
-            }
-            resp = await self.__make_request("GET", "https://gethash-api.vercel.app/get-hash", params=params, headers=headers)
-            return resp.json().get("hash")
+                return result.stdout.strip()
+            else: 
+                headers = {
+                    "content-type": "application/x-www-form-urlencoded"
+                }
+                params = {
+                    "hash": xvqd_hash or self.x_vqd_hash_1
+                }
+                resp = await self.__make_request("GET", "https://gethash-api.vercel.app/get-hash", params=params, headers=headers)
+                return resp.json().get("hash")
+        except: 
+            return ""
 
     async def get_xfe_version(self) -> str: 
         params = {
@@ -174,6 +177,10 @@ class DuckDuckGo:
 
         resp = await self.__make_request("POST", self.main_url + "/duckchat/v1/chat", headers=headers, json=json_data)
         resp.encoding = "utf-8"
+
+        x_vqd_hash_1 = resp.headers.get("x-vqd-hash-1")
+        if await self.make_xvqd_hash(x_vqd_hash_1): 
+            self.x_vqd_hash_1 = x_vqd_hash_1
 
         resp_text = ""
         for chunk in resp.text.splitlines(): 
