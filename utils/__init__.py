@@ -87,7 +87,7 @@ async def chat(user: ChatUser, prompt: Union[str, Tuple[str, str]]) -> List[str]
         response = await chat_client.chat(prompt, **kwargs)
 
         # destroy instance: 
-        chat_client.destroy()
+        await chat_client.destroy()
     else:
         response = await asyncio.to_thread(chat_client.chat, prompt, **kwargs)
     
