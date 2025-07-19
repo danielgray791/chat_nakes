@@ -91,7 +91,7 @@ class DuckDuckGo:
                     print(f"[Alive Request Exception]: {e}")
                     pass
                 except asyncio.CancelledError: 
-                    return
+                    break
                 except Exception as e: 
                     print(f"[Alive Normal Exception]: {e}")
                     pass
@@ -290,8 +290,8 @@ class DuckDuckGo:
         return resp
 
     async def destroy(self): 
+        self.task_alive.cancel()
         try:
-            self.task_alive.cancel()
             await self.task_alive
         except asyncio.CancelledError:
             pass  # Task dibatalkan dengan sukses
