@@ -1,4 +1,6 @@
 import asyncio
+import os
+
 from typing import List, Callable
 from handler import CommandHandler
 from telebot.async_telebot import AsyncTeleBot
