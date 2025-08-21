@@ -8,5 +8,5 @@ pymongo
 gradio_client
 python-dotenv
 starlette
-uvicorn
+gunicorn
 pillow
