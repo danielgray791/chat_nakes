@@ -1,5 +1,5 @@
 # Ganti dengan versi Python yang sesuai
-FROM python:3.12
+FROM python:3.12.7
 
 # RUN which python
 # RUN git clone https://github.com/johnrobert7991/WaBotPython.git /waBotPython
