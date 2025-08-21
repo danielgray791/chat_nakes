@@ -4,10 +4,10 @@ FROM python:3.12
 # RUN which python
 # RUN git clone https://github.com/johnrobert7991/WaBotPython.git /waBotPython
 # Membuat direktori kerja
-RUN mkdir -p /waBotPython
+RUN mkdir -p /chat_nakes
 
 # Set direktori kerja
-WORKDIR /waBotPython
+WORKDIR /chat_nakes
 
 # Menyalin semua file dari direktori saat ini ke dalam image
 COPY . .
