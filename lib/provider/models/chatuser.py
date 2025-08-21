@@ -5,7 +5,7 @@ from .. import Corcel, Artifacts, Scira, get_instance, providers
 from dataclasses import dataclass
 from typing import Dict, Optional, List, Any, Union
 
-DEFAULT_PROVIDER = providers["scira"]
+DEFAULT_PROVIDER = providers["duckduckgo"]
 db = MongoDB()
 
 @dataclass
@@ -97,8 +97,8 @@ class ChatUser:
 
         history = self.history[item_name]
 
-        if len(history) >= 40: 
-            history = history[:2] + history[20:]
+        if len(history) >= 10: 
+            history = history[:2] + history[5:]
 
         data_dict = self.to_dict()
         res = await db.set(data_dict)
@@ -115,7 +115,7 @@ class ChatUser:
         config = user["config"]
         provider = config["provider"]
         provider_item_name = provider["item_name"]
-        model_ins = get_instance(provider_item_name)
+        model_ins = get_instance
 
         return cls(
             user_id=str(user["id"]),
