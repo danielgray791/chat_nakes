@@ -99,7 +99,7 @@ class DuckDuckGo:
                 await asyncio.sleep(delay)
             
         loop = asyncio.get_event_loop()
-        self.task_alive = loop.create_task(alive(5))
+        self.task_alive = loop.create_task(alive(120))
 
         while not self.x_vqd_hash_1 and not self.x_fe_version: 
             await asyncio.sleep(0.25)
@@ -247,7 +247,7 @@ class DuckDuckGo:
             if not chunk: 
                 continue
 
-            if chunk == "[DONE]": 
+            if chunk in { "[DONE]", "[PING]" }: 
                 break
 
             c_json = json.loads(chunk)
